@@ -8,6 +8,7 @@ import StationCard from "@/components/charging/StationCard";
 import FilterTabs from "@/components/charging/FilterTabs";
 import StationDetailSheet from "@/components/charging/StationDetailSheet";
 import { searchStationsNear } from "@/lib/chargingSearch";
+import { useLanguage } from "@/lib/i18n.jsx";
 import { cn } from "@/lib/utils";
 
 const TEL_AVIV = [32.0853, 34.7818];
@@ -56,6 +57,7 @@ export default function MapPage() {
   const [center, setCenter] = useState(TEL_AVIV);
   const [sheetOpen, setSheetOpen] = useState(false);
   const mapRef = useRef(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
     base44.entities.ChargingStation.list("-created_date", 100)
@@ -123,7 +125,7 @@ export default function MapPage() {
           attribution='&copy; OpenStreetMap &copy; CARTO'
         />
         <FlyTo center={center} />
-        {userPos && <Marker position={userPos} icon={userIcon}><Popup>Your location</Popup></Marker>}
+        {userPos && <Marker position={userPos} icon={userIcon}><Popup>{t("detail.yourLocation")}</Popup></Marker>}
         {filtered.map((s) =>
           s.latitude && s.longitude ? (
             <Marker
@@ -135,7 +137,7 @@ export default function MapPage() {
               <Popup>
                 <div className="text-sm">
                   <div className="font-semibold">{s.name}</div>
-                  <div className="text-white/60">{s.type} · {s.power_kw} kW · {s.currency}{s.price_per_kwh.toFixed(2)}/kWh</div>
+                  <div className="text-white/60">{s.type} · {s.power_kw} kW · {s.price_per_kwh.toFixed(2)} ₪/kWh</div>
                 </div>
               </Popup>
             </Marker>
@@ -154,7 +156,7 @@ export default function MapPage() {
                 liveMode ? "bg-gradient-to-r from-cyan-400 to-emerald-400 text-neutral-950 neon-blue" : "bg-white/5 text-white/60"
               )}
             >
-              <LocateFixed className="w-4 h-4" /> Live
+              <LocateFixed className="w-4 h-4" /> {t("map.live")}
             </button>
             <div className="flex-1 flex items-center gap-2 h-10 px-3 rounded-2xl bg-white/5">
               <Search className="w-4 h-4 text-white/40" />
@@ -162,19 +164,19 @@ export default function MapPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && liveMode && runLiveSearch(query)}
-                placeholder={liveMode ? "City in Israel, e.g. Tel Aviv" : "Search stations"}
+                placeholder={liveMode ? t("map.searchLive") : t("map.search")}
                 className="flex-1 bg-transparent outline-none text-[13px] text-white placeholder:text-white/40"
               />
               {liveMode && (
                 <button onClick={() => runLiveSearch(query)} disabled={liveLoading} className="text-[13px] font-semibold text-cyan-300 disabled:opacity-50">
-                  {liveLoading ? "…" : "Find"}
+                  {liveLoading ? "…" : t("map.find")}
                 </button>
               )}
             </div>
             <button
               onClick={() => userPos && setCenter(userPos)}
               className="w-10 h-10 rounded-2xl bg-white/5 flex items-center justify-center active:scale-90 transition"
-              aria-label="My location"
+              aria-label={t("map.myLocation")}
             >
               <LocateFixed className="w-4 h-4 text-cyan-300" />
             </button>
@@ -192,9 +194,9 @@ export default function MapPage() {
 
         {/* Legend */}
         <div className="glass rounded-2xl px-3 py-2 mt-2 inline-flex items-center gap-3 text-[11px] text-white/70">
-          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-400 neon-green" /> Available</span>
-          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-400" /> Occupied</span>
-          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-white/30" /> Offline</span>
+          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-emerald-400 neon-green" /> {t("map.legend.available")}</span>
+          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-red-400" /> {t("map.legend.occupied")}</span>
+          <span className="flex items-center gap-1"><span className="w-2.5 h-2.5 rounded-full bg-white/30" /> {t("map.legend.offline")}</span>
         </div>
       </div>
 
@@ -208,7 +210,7 @@ export default function MapPage() {
             <div className="w-10 h-1.5 rounded-full bg-white/20" />
             <div className="flex items-center gap-2 mt-2 text-white/70">
               <Layers className="w-3.5 h-3.5" />
-              <span className="text-[13px] font-semibold">{filtered.length} stations nearby</span>
+              <span className="text-[13px] font-semibold">{t("map.stationsNearby", { n: filtered.length })}</span>
             </div>
           </button>
           <div className="overflow-y-auto px-4 pb-4 space-y-3">
@@ -217,7 +219,7 @@ export default function MapPage() {
             ) : filtered.length === 0 ? (
               <div className="text-center py-10 text-white/40">
                 <SlidersHorizontal className="w-7 h-7 mx-auto mb-2 opacity-50" />
-                <p className="text-[13px]">No stations match your filters</p>
+                <p className="text-[13px]">{t("map.noStations")}</p>
               </div>
             ) : (
               filtered.map((s) => (

@@ -1,10 +1,12 @@
 import React from "react";
 import { X, MapPin, Star, CheckCircle2, Clock, Navigation, Wifi, Coffee, ShoppingBag, Plug, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n.jsx";
 
 const amenityMeta = { wifi: { icon: Wifi, label: "Wi-Fi" }, coffee: { icon: Coffee, label: "Café" }, shop: { icon: ShoppingBag, label: "Shopping" } };
 
 export default function StationDetailSheet({ station, onClose }) {
+  const { t } = useLanguage();
   if (!station) return null;
   const isDC = station.type === "DC";
   const occ = station.total ? ((station.total - station.available) / station.total) * 100 : 0;
@@ -43,18 +45,18 @@ export default function StationDetailSheet({ station, onClose }) {
           </div>
 
           <div className="grid grid-cols-3 gap-2.5 mt-4">
-            <div className="rounded-2xl bg-white/5 p-3 text-center"><div className="text-[11px] text-white/40">Type</div><div className={cn("text-sm font-bold mt-0.5", isDC ? "text-violet-300" : "text-cyan-300")}>{station.type}</div></div>
-            <div className="rounded-2xl bg-white/5 p-3 text-center"><div className="text-[11px] text-white/40">Power</div><div className="text-sm font-bold text-white mt-0.5">{station.power_kw} kW</div></div>
-            <div className="rounded-2xl bg-white/5 p-3 text-center"><div className="text-[11px] text-white/40">Price</div><div className="text-sm font-bold text-white mt-0.5">{station.currency}{station.price_per_kwh.toFixed(2)}</div></div>
+            <div className="rounded-2xl bg-white/5 p-3 text-center"><div className="text-[11px] text-white/40">{t("detail.type")}</div><div className={cn("text-sm font-bold mt-0.5", isDC ? "text-violet-300" : "text-cyan-300")}>{station.type}</div></div>
+            <div className="rounded-2xl bg-white/5 p-3 text-center"><div className="text-[11px] text-white/40">{t("detail.power")}</div><div className="text-sm font-bold text-white mt-0.5">{station.power_kw} kW</div></div>
+            <div className="rounded-2xl bg-white/5 p-3 text-center"><div className="text-[11px] text-white/40">{t("detail.price")}</div><div className="text-sm font-bold text-white mt-0.5">{station.price_per_kwh.toFixed(2)} ₪</div></div>
           </div>
 
           <div className="mt-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[13px] font-semibold text-white/80">Availability</span>
+              <span className="text-[13px] font-semibold text-white/80">{t("detail.availability")}</span>
               <span className="flex items-center gap-1 text-[13px]">
                 {station.status === "available" ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Clock className="w-4 h-4 text-red-400" />}
                 <span className="font-semibold text-white">{station.available}</span>
-                <span className="text-white/40">/ {station.total} free</span>
+                <span className="text-white/40">/ {station.total} {t("detail.free")}</span>
               </span>
             </div>
             <div className="h-2 rounded-full bg-white/10 overflow-hidden">
@@ -64,7 +66,7 @@ export default function StationDetailSheet({ station, onClose }) {
 
           {station.amenities?.length > 0 && (
             <div className="mt-4">
-              <div className="text-[13px] font-semibold text-white/80 mb-2">Amenities</div>
+              <div className="text-[13px] font-semibold text-white/80 mb-2">{t("detail.amenities")}</div>
               <div className="flex flex-wrap gap-2">
                 {station.amenities.map((a) => {
                   const m = amenityMeta[a]; if (!m) return null; const Icon = m.icon;
@@ -75,9 +77,9 @@ export default function StationDetailSheet({ station, onClose }) {
           )}
 
           <div className="mt-5 flex gap-2.5">
-            <button className="flex-1 h-12 rounded-2xl bg-white/5 font-semibold text-[14px] text-white active:scale-95 transition">Save</button>
+            <button className="flex-1 h-12 rounded-2xl bg-white/5 font-semibold text-[14px] text-white active:scale-95 transition">{t("detail.save")}</button>
             <a href={navUrl || "#"} target="_blank" rel="noreferrer" className="flex-[1.6] h-12 rounded-2xl bg-gradient-to-r from-cyan-400 to-emerald-400 font-semibold text-[14px] text-neutral-950 flex items-center justify-center gap-2 active:scale-95 transition shadow-[0_0_20px_rgba(34,211,238,0.5)]">
-              <Navigation className="w-4 h-4" /> Navigate <ExternalLink className="w-3 h-3 opacity-60" />
+              <Navigation className="w-4 h-4" /> {t("detail.navigate")} <ExternalLink className="w-3 h-3 opacity-60" />
             </a>
           </div>
         </div>

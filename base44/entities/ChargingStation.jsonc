@@ -38,11 +38,11 @@
     },
     "price_per_kwh": {
       "type": "number",
-      "description": "Price per kWh in local currency"
+      "description": "Price per kWh in ILS (Israeli Shekel)"
     },
     "currency": {
       "type": "string",
-      "default": "\u20ac"
+      "default": "\u20aa"
     },
     "available": {
       "type": "number",

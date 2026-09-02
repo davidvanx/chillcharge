@@ -8,6 +8,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import { AccessibilityProvider } from '@/lib/accessibility.jsx';
+import { LanguageProvider } from '@/lib/i18n.jsx';
 
 // Auth pages
 import Login from '@/pages/Login';
@@ -26,6 +27,8 @@ import Privacy from '@/pages/Privacy';
 import Terms from '@/pages/Terms';
 import AccessibilityStatement from '@/pages/AccessibilityStatement';
 import Licenses from '@/pages/Licenses';
+import ChargingSessions from '@/pages/ChargingSessions';
+import Receipts from '@/pages/Receipts';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError } = useAuth();
@@ -62,6 +65,8 @@ const AuthenticatedApp = () => {
           <Route path="/legal/terms" element={<Terms />} />
           <Route path="/legal/accessibility" element={<AccessibilityStatement />} />
           <Route path="/legal/licenses" element={<Licenses />} />
+          <Route path="/sessions" element={<ChargingSessions />} />
+          <Route path="/receipts" element={<Receipts />} />
         </Route>
       </Route>
 
@@ -75,13 +80,15 @@ function App() {
   return (
     <AuthProvider>
       <AccessibilityProvider>
-        <QueryClientProvider client={queryClientInstance}>
-          <Router>
-            <ScrollToTop />
-            <AuthenticatedApp />
-          </Router>
-          <Toaster />
-        </QueryClientProvider>
+        <LanguageProvider>
+          <QueryClientProvider client={queryClientInstance}>
+            <Router>
+              <ScrollToTop />
+              <AuthenticatedApp />
+            </Router>
+            <Toaster />
+          </QueryClientProvider>
+        </LanguageProvider>
       </AccessibilityProvider>
     </AuthProvider>
   )

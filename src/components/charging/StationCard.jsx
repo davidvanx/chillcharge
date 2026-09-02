@@ -1,6 +1,7 @@
 import React from "react";
 import { Zap, MapPin, Star, CheckCircle2, Clock, Wifi, Coffee, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/lib/i18n.jsx";
 
 const amenityIcon = { wifi: Wifi, coffee: Coffee, shop: ShoppingBag };
 
@@ -14,6 +15,7 @@ export default function StationCard({ station, isBestValue, onClick }) {
   const isDC = station.type === "DC";
   const occ = station.total ? ((station.total - station.available) / station.total) * 100 : 0;
   const dot = station.status === "available" ? "bg-emerald-400" : station.status === "busy" ? "bg-red-400" : "bg-white/30";
+  const { t } = useLanguage();
 
   return (
     <button
@@ -26,7 +28,7 @@ export default function StationCard({ station, isBestValue, onClick }) {
       {isBestValue && (
         <div className="flex items-center gap-1.5 mb-2.5">
           <span className="text-[11px] font-semibold text-emerald-300 bg-emerald-400/15 px-2.5 py-1 rounded-full flex items-center gap-1">
-            <Zap className="w-3 h-3 fill-emerald-400 text-emerald-400" /> Best value
+            <Zap className="w-3 h-3 fill-emerald-400 text-emerald-400" /> {t("station.bestValue")}
           </span>
         </div>
       )}
@@ -60,14 +62,14 @@ export default function StationCard({ station, isBestValue, onClick }) {
 
       <div className="flex items-end justify-between mt-3.5 pt-3 border-t border-white/10">
         <div>
-          <div className="text-[11px] text-white/40 leading-none">Price</div>
+          <div className="text-[11px] text-white/40 leading-none">{t("station.price")}</div>
           <div className="text-[17px] font-bold text-white leading-tight mt-0.5">
-            {station.currency}{station.price_per_kwh.toFixed(2)}
+            {station.price_per_kwh.toFixed(2)} ₪
             <span className="text-[11px] font-medium text-white/40 ml-0.5">/kWh</span>
           </div>
         </div>
         <div className="text-right">
-          <div className="text-[11px] text-white/40 leading-none">Available</div>
+          <div className="text-[11px] text-white/40 leading-none">{t("station.available")}</div>
           <div className="flex items-center gap-1 mt-0.5">
             {station.status === "available" ? <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" /> : <Clock className="w-3.5 h-3.5 text-red-400" />}
             <span className="text-[13px] font-semibold text-white">{station.available}/{station.total}</span>
