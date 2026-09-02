@@ -77,9 +77,9 @@ export default function Home() {
   return (
     <iPhoneFrame>
     <div className="h-full font-body text-neutral-900">
-      <div className="mx-auto max-w-md h-full bg-neutral-50 relative flex flex-col">
+      <div className="mx-auto max-w-md h-full bg-gradient-to-b from-emerald-50/60 to-neutral-50 relative flex flex-col">
         {/* Status bar */}
-        <div className="sticky top-0 z-30 bg-neutral-50/80 backdrop-blur-xl">
+        <div className="sticky top-0 z-30 bg-emerald-50/70 backdrop-blur-xl">
           <div className="flex items-center justify-between px-6 pt-3 pb-1 text-[12px] font-semibold text-neutral-900">
             <span>9:41</span>
             <div className="flex items-center gap-1.5">
@@ -93,14 +93,16 @@ export default function Home() {
           <div className="px-5 pt-2 pb-3">
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-[26px] font-bold tracking-tight leading-tight">Chillcharge</h1>
-                <p className="text-[12px] text-neutral-500 mt-0.5 flex items-center gap-1">
+                <h1 className="text-[26px] font-bold tracking-tight leading-tight bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Chillcharge</h1>
+                <p className="text-[12px] text-emerald-600 mt-0.5 flex items-center gap-1 font-medium">
                   <LocateFixed className="w-3 h-3" /> Charging near you
                 </p>
               </div>
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 flex items-center justify-center shadow-md">
-                <Zap className="w-5 h-5 text-white fill-white" />
-              </div>
+              <img
+                src="https://media.base44.com/images/public/6a9882e54bedc57ccf9f0c16/018895c7e_generated_image.png"
+                alt="Chillcharge"
+                className="w-11 h-11 rounded-2xl shadow-lg object-cover ring-1 ring-emerald-200"
+              />
             </div>
           </div>
 
@@ -211,8 +213,8 @@ export default function Home() {
         {/* Bottom tab bar */}
         <div className="shrink-0 px-3 pb-3 pt-1">
           <div className="rounded-3xl bg-white/90 backdrop-blur-xl border border-black/5 shadow-[0_-2px_20px_rgba(0,0,0,0.08)] flex items-center justify-around py-2.5">
-            <button className="flex flex-col items-center gap-0.5 text-neutral-900">
-              <Zap className="w-5 h-5 fill-neutral-900" />
+            <button className="flex flex-col items-center gap-0.5 text-emerald-600">
+              <Zap className="w-5 h-5 fill-emerald-500 text-emerald-500" />
               <span className="text-[10px] font-semibold">Stations</span>
             </button>
             <button className="flex flex-col items-center gap-0.5 text-neutral-400">
