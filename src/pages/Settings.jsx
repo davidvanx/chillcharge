@@ -1,8 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Bell, Moon, Accessibility, FileText, Shield, Eye, ChevronRight, Languages } from "lucide-react";
+import { Bell, Moon, Accessibility, FileText, Shield, Eye, ChevronRight, Languages, Palette } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
-import { useA11y } from "@/lib/accessibility.jsx";
+import { useA11y, ACCENT_PRESETS } from "@/lib/accessibility.jsx";
 import { useLanguage } from "@/lib/i18n.jsx";
 import { cn } from "@/lib/utils";
 
@@ -34,6 +34,15 @@ export default function Settings() {
             <button onClick={() => setLang("en")} className={cn("flex-1 py-2.5 rounded-xl text-[13px] font-semibold transition", lang === "en" ? "bg-cyan-400 text-neutral-950" : "bg-white/5 text-white/60")}>
               English
             </button>
+          </div>
+        </div>
+
+        <div className="glass rounded-2xl p-4">
+          <div className="flex items-center gap-3 text-white text-sm font-medium mb-3"><Palette className="w-4 h-4 text-cyan-300" /> {t("settings.accentColor")}</div>
+          <div className="flex gap-2.5">
+            {ACCENT_PRESETS.map((p) => (
+              <button key={p.id} onClick={() => a11y.setAccent(p.id)} aria-label={p.label} className={cn("flex-1 h-10 rounded-xl transition", a11y.accent === p.id ? "ring-2 ring-white ring-offset-2 ring-offset-neutral-900 scale-105" : "opacity-80 hover:opacity-100")} style={{ background: `hsl(${p.primary})` }} />
+            ))}
           </div>
         </div>
 

@@ -1,8 +1,16 @@
-import React, { createContext, useContext, useState, useMemo } from "react";
+import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 
 const A11yContext = createContext(null);
 
 export const useA11y = () => useContext(A11yContext);
+
+export const ACCENT_PRESETS = [
+  { id: "cyan", label: "כחול-ירוק", primary: "190 100% 50%", accent: "150 100% 50%" },
+  { id: "violet", label: "סגול", primary: "268 100% 65%", accent: "320 100% 60%" },
+  { id: "amber", label: "ענבר", primary: "43 100% 60%", accent: "25 100% 55%" },
+  { id: "rose", label: "ורוד", primary: "330 100% 60%", accent: "350 100% 65%" },
+  { id: "blue", label: "כחול", primary: "220 100% 60%", accent: "200 100% 55%" },
+];
 
 const cbFilters = {
   none: "none",
@@ -15,6 +23,20 @@ export function AccessibilityProvider({ children }) {
   const [textScale, setTextScale] = useState(1);
   const [highContrast, setHighContrast] = useState(false);
   const [colorBlind, setColorBlind] = useState("none");
+  const [accent, setAccent] = useState(() => localStorage.getItem("cc-accent") || "cyan");
+
+  useEffect(() => {
+    const preset = ACCENT_PRESETS.find((p) => p.id === accent) || ACCENT_PRESETS[0];
+    const root = document.documentElement;
+    root.style.setProperty("--primary", preset.primary);
+    root.style.setProperty("--accent", preset.accent);
+    root.style.setProperty("--ring", preset.primary);
+    root.style.setProperty("--sidebar-primary", preset.primary);
+    root.style.setProperty("--sidebar-ring", preset.primary);
+    root.style.setProperty("--chart-1", preset.primary);
+    root.style.setProperty("--chart-2", preset.accent);
+    localStorage.setItem("cc-accent", accent);
+  }, [accent]);
 
   const value = useMemo(
     () => ({
@@ -24,13 +46,16 @@ export function AccessibilityProvider({ children }) {
       setHighContrast,
       colorBlind,
       setColorBlind,
+      accent,
+      setAccent,
       reset: () => {
         setTextScale(1);
         setHighContrast(false);
         setColorBlind("none");
+        setAccent("cyan");
       },
     }),
-    [textScale, highContrast, colorBlind]
+    [textScale, highContrast, colorBlind, accent]
   );
 
   return (
