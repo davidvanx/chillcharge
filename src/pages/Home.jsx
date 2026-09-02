@@ -5,6 +5,7 @@ import StationCard from "@/components/charging/StationCard";
 import FilterTabs from "@/components/charging/FilterTabs";
 import SortMenu from "@/components/charging/SortMenu";
 import StationDetailSheet from "@/components/charging/StationDetailSheet";
+import iPhoneFrame from "@/components/charging/iPhoneFrame";
 
 export default function Home() {
   const [stations, setStations] = useState([]);
@@ -55,8 +56,8 @@ export default function Home() {
   const acCount = stations.filter((s) => s.type === "AC").length;
 
   return (
-    <div className="min-h-screen bg-neutral-50 font-body text-neutral-900">
-      {/* iOS-style phone frame on desktop, full on mobile */}
+    <iPhoneFrame>
+    <div className="min-h-screen font-body text-neutral-900">
       <div className="mx-auto max-w-md min-h-screen bg-neutral-50 relative">
         {/* Status bar */}
         <div className="sticky top-0 z-30 bg-neutral-50/80 backdrop-blur-xl">
@@ -139,7 +140,7 @@ export default function Home() {
         </div>
 
         {/* Bottom tab bar */}
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md z-30">
+        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] z-30 sm:bottom-[14px]">
           <div className="mx-3 mb-3 rounded-3xl bg-white/90 backdrop-blur-xl border border-black/5 shadow-[0_-2px_20px_rgba(0,0,0,0.08)] flex items-center justify-around py-2.5">
             <button className="flex flex-col items-center gap-0.5 text-neutral-900">
               <Zap className="w-5 h-5 fill-neutral-900" />
@@ -159,5 +160,6 @@ export default function Home() {
 
       <StationDetailSheet station={selected} onClose={() => setSelected(null)} />
     </div>
+    </iPhoneFrame>
   );
 }
