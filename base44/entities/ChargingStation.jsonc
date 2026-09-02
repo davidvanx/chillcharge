@@ -1,0 +1,80 @@
+{
+  "name": "ChargingStation",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "network": {
+      "type": "string"
+    },
+    "address": {
+      "type": "string"
+    },
+    "city": {
+      "type": "string"
+    },
+    "latitude": {
+      "type": "number"
+    },
+    "longitude": {
+      "type": "number"
+    },
+    "distance_km": {
+      "type": "number",
+      "description": "Distance from user in km"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "AC",
+        "DC"
+      ],
+      "description": "AC (slower) or DC (fast)"
+    },
+    "power_kw": {
+      "type": "number",
+      "description": "Max power output in kW"
+    },
+    "price_per_kwh": {
+      "type": "number",
+      "description": "Price per kWh in local currency"
+    },
+    "currency": {
+      "type": "string",
+      "default": "\u20ac"
+    },
+    "available": {
+      "type": "number",
+      "description": "Available connectors right now"
+    },
+    "total": {
+      "type": "number",
+      "description": "Total connectors"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "available",
+        "busy",
+        "offline"
+      ],
+      "default": "available"
+    },
+    "amenities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "rating": {
+      "type": "number"
+    }
+  },
+  "required": [
+    "name",
+    "type",
+    "power_kw",
+    "price_per_kwh"
+  ]
+}
