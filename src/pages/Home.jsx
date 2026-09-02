@@ -57,8 +57,8 @@ export default function Home() {
 
   return (
     <iPhoneFrame>
-    <div className="min-h-screen font-body text-neutral-900">
-      <div className="mx-auto max-w-md min-h-screen bg-neutral-50 relative">
+    <div className="h-full font-body text-neutral-900">
+      <div className="mx-auto max-w-md h-full bg-neutral-50 relative flex flex-col">
         {/* Status bar */}
         <div className="sticky top-0 z-30 bg-neutral-50/80 backdrop-blur-xl">
           <div className="flex items-center justify-between px-6 pt-3 pb-1 text-[12px] font-semibold text-neutral-900">
@@ -113,7 +113,7 @@ export default function Home() {
         </div>
 
         {/* List */}
-        <div className="px-5 pb-28 space-y-3">
+        <div className="px-5 pt-1 pb-4 space-y-3 flex-1 overflow-y-auto">
           {loading ? (
             [0, 1, 2, 3].map((i) => (
               <div key={i} className="rounded-3xl bg-white border border-black/5 p-4 h-44 animate-pulse">
@@ -140,8 +140,8 @@ export default function Home() {
         </div>
 
         {/* Bottom tab bar */}
-        <div className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[390px] z-30 sm:bottom-[14px]">
-          <div className="mx-3 mb-3 rounded-3xl bg-white/90 backdrop-blur-xl border border-black/5 shadow-[0_-2px_20px_rgba(0,0,0,0.08)] flex items-center justify-around py-2.5">
+        <div className="shrink-0 px-3 pb-3 pt-1">
+          <div className="rounded-3xl bg-white/90 backdrop-blur-xl border border-black/5 shadow-[0_-2px_20px_rgba(0,0,0,0.08)] flex items-center justify-around py-2.5">
             <button className="flex flex-col items-center gap-0.5 text-neutral-900">
               <Zap className="w-5 h-5 fill-neutral-900" />
               <span className="text-[10px] font-semibold">Stations</span>
