@@ -6,6 +6,7 @@ import FilterTabs from "@/components/charging/FilterTabs";
 import SortMenu from "@/components/charging/SortMenu";
 import StationDetailSheet from "@/components/charging/StationDetailSheet";
 import iPhoneFrame from "@/components/charging/iPhoneFrame";
+import { searchStationsNear } from "@/lib/chargingSearch";
 
 export default function Home() {
   const [stations, setStations] = useState([]);
@@ -14,6 +15,9 @@ export default function Home() {
   const [sort, setSort] = useState("value");
   const [query, setQuery] = useState("");
   const [selected, setSelected] = useState(null);
+  const [liveMode, setLiveMode] = useState(false);
+  const [liveLoading, setLiveLoading] = useState(false);
+  const [liveLocation, setLiveLocation] = useState("");
 
   useEffect(() => {
     base44.entities.ChargingStation.list("-created_date", 100)
@@ -21,6 +25,21 @@ export default function Home() {
       .catch(() => setStations([]))
       .finally(() => setLoading(false));
   }, []);
+
+  const runLiveSearch = async (location) => {
+    const loc = (location || query).trim();
+    if (!loc) return;
+    setLiveLoading(true);
+    setLiveLocation(loc);
+    try {
+      const results = await searchStationsNear(loc);
+      setStations(results);
+    } catch (e) {
+      setStations([]);
+    } finally {
+      setLiveLoading(false);
+    }
+  };
 
   const filtered = useMemo(() => {
     let list = [...stations];
@@ -86,16 +105,66 @@ export default function Home() {
           </div>
 
           {/* Search */}
-          <div className="px-5 pb-3">
-            <div className="flex items-center gap-2 h-11 px-3.5 rounded-2xl bg-white border border-black/5 shadow-sm">
-              <Search className="w-4 h-4 text-neutral-400" />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search stations or city"
-                className="flex-1 bg-transparent outline-none text-[14px] placeholder:text-neutral-400"
-              />
+          <div className="px-5 pb-3 space-y-2">
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setLiveMode((v) => !v)}
+                className={
+                  "h-11 px-3.5 rounded-2xl border shadow-sm flex items-center gap-1.5 text-[13px] font-semibold transition active:scale-95 " +
+                  (liveMode
+                    ? "bg-emerald-500 text-white border-emerald-500"
+                    : "bg-white text-neutral-600 border-black/5")
+                }
+              >
+                <LocateFixed className="w-4 h-4" />
+                Live
+              </button>
+              <div className="flex-1 flex items-center gap-2 h-11 px-3.5 rounded-2xl bg-white border border-black/5 shadow-sm">
+                <Search className="w-4 h-4 text-neutral-400" />
+                <input
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      if (liveMode) runLiveSearch(query);
+                    }
+                  }}
+                  placeholder={liveMode ? "Enter a city in Israel, e.g. Tel Aviv" : "Search stations or city"}
+                  className="flex-1 bg-transparent outline-none text-[14px] placeholder:text-neutral-400"
+                />
+                {liveMode && (
+                  <button
+                    onClick={() => runLiveSearch(query)}
+                    disabled={liveLoading}
+                    className="text-[13px] font-semibold text-emerald-600 disabled:opacity-50"
+                  >
+                    {liveLoading ? "…" : "Find"}
+                  </button>
+                )}
+              </div>
             </div>
+            {liveMode && (
+              <div className="flex gap-1.5 flex-wrap">
+                {["Tel Aviv", "Jerusalem", "Haifa", "Herzliya", "Netanya"].map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => {
+                      setQuery(c);
+                      runLiveSearch(c);
+                    }}
+                    className="px-2.5 py-1 rounded-full bg-white border border-black/5 text-[11px] font-medium text-neutral-500 shadow-sm active:scale-95 transition"
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
+            )}
+            {liveMode && liveLocation && (
+              <p className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                Live results near {liveLocation}, Israel
+              </p>
+            )}
           </div>
 
           {/* Filters + sort */}
@@ -114,7 +183,7 @@ export default function Home() {
 
         {/* List */}
         <div className="px-5 pt-1 pb-4 space-y-3 flex-1 overflow-y-auto">
-          {loading ? (
+          {loading || liveLoading ? (
             [0, 1, 2, 3].map((i) => (
               <div key={i} className="rounded-3xl bg-white border border-black/5 p-4 h-44 animate-pulse">
                 <div className="h-3 w-1/2 bg-neutral-100 rounded mb-3" />
