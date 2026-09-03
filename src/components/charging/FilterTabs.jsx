@@ -1,29 +1,27 @@
 import React from "react";
 import { cn } from "@/lib/utils";
-import { useLanguage } from "@/lib/i18n.jsx";
 
 export default function FilterTabs({ value, onChange }) {
-  const { t } = useLanguage();
   const tabs = [
-    { id: "all", label: t("filter.all") },
-    { id: "DC", label: t("filter.dc") },
-    { id: "AC", label: t("filter.ac") },
+    { id: "all", label: "All" },
+    { id: "DC", label: "DC Fast" },
+    { id: "AC", label: "AC" },
   ];
 
   return (
     <div className="flex gap-2">
-      {tabs.map((tab) => (
+      {tabs.map((t) => (
         <button
-          key={tab.id}
-          onClick={() => onChange(tab.id)}
+          key={t.id}
+          onClick={() => onChange(t.id)}
           className={cn(
-            "px-4 py-1.5 rounded-full text-[12px] font-semibold transition-all duration-200 active:scale-95",
-            value === tab.id
-              ? "bg-gradient-to-r from-cyan-400 to-emerald-400 text-neutral-950 neon-blue"
-              : "bg-white/5 text-white/50 border border-white/10"
+            "px-4 py-2 rounded-full text-[13px] font-semibold transition-all duration-200 active:scale-95",
+            value === t.id
+              ? "bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-md shadow-emerald-500/30"
+              : "bg-white text-neutral-500 border border-black/5 shadow-sm"
           )}
         >
-          {tab.label}
+          {t.label}
         </button>
       ))}
     </div>
