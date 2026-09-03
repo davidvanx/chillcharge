@@ -300,7 +300,7 @@ export default function ChargingSession({ station, onEnd }) {
         </div>
       </div>
 
-      <div className="px-5 pb-6 space-y-3">
+      <div className="px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] space-y-3">
         <a
           href="tel:*2422"
           className="w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 flex items-center gap-3 active:scale-95 transition"

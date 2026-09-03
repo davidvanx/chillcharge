@@ -5,7 +5,7 @@ import StationCard from "@/components/charging/StationCard";
 import FilterTabs from "@/components/charging/FilterTabs";
 import SortMenu from "@/components/charging/SortMenu";
 import StationDetailSheet from "@/components/charging/StationDetailSheet";
-import iPhoneFrame from "@/components/charging/iPhoneFrame";
+import IPhoneFrame from "@/components/charging/iPhoneFrame";
 import SettingsMenu from "@/components/charging/SettingsMenu";
 import PaymentSheet from "@/components/charging/PaymentSheet";
 import ChargingSession from "@/components/charging/ChargingSession";
@@ -123,7 +123,7 @@ function HomeInner() {
       <div className={`mx-auto max-w-md h-full bg-gradient-to-b from-emerald-50/60 to-neutral-50 relative flex flex-col ${a11yClass}`} style={a11yStyle}>
         {/* Status bar */}
         <div className="sticky top-0 z-30 bg-emerald-50/70 backdrop-blur-xl">
-          <div className="flex items-center justify-between px-6 pt-3 pb-1 text-[12px] font-semibold text-neutral-900">
+          <div className="flex items-center justify-between px-6 pt-[max(0.75rem,env(safe-area-inset-top))] pb-1 text-[12px] font-semibold text-neutral-900">
             <span>9:41</span>
             <div className="flex items-center gap-1.5">
               <svg width="16" height="10" viewBox="0 0 16 10" fill="currentColor"><rect x="0" y="6" width="3" height="4" rx="1"/><rect x="4" y="4" width="3" height="6" rx="1"/><rect x="8" y="2" width="3" height="8" rx="1"/><rect x="12" y="0" width="3" height="10" rx="1"/></svg>
@@ -239,7 +239,7 @@ function HomeInner() {
         </div>
 
         {view === "list" ? (
-          <div className="px-5 pt-1 pb-4 space-y-3 flex-1 min-h-0 overflow-y-auto">
+          <div className="px-5 pt-1 pb-4 space-y-3 flex-1 min-h-0 overflow-y-auto no-scrollbar">
             {loading || liveLoading ? (
               [0, 1, 2, 3].map((i) => (
                 <div key={i} className="rounded-3xl bg-white border border-black/5 p-4 h-44 animate-pulse">
@@ -269,7 +269,7 @@ function HomeInner() {
         )}
 
         {/* Bottom tab bar */}
-        <div className="shrink-0 px-3 pb-3 pt-1">
+        <div className="shrink-0 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-1">
           <div className="relative z-30 rounded-3xl bg-white/90 backdrop-blur-xl border border-black/5 shadow-[0_-2px_20px_rgba(0,0,0,0.08)] flex items-center justify-around py-2.5">
             <button onClick={() => setView("list")} className={cn("flex flex-col items-center gap-0.5 transition", view === "list" ? "text-emerald-600" : "text-neutral-400")}>
               <Zap className={cn("w-5 h-5", view === "list" && "fill-emerald-500 text-emerald-500")} />
@@ -321,10 +321,10 @@ function HomeInner() {
 
 export default function Home() {
   return (
-    <iPhoneFrame>
+    <IPhoneFrame>
       <SettingsProvider>
         <HomeInner />
       </SettingsProvider>
-    </iPhoneFrame>
+    </IPhoneFrame>
   );
 }

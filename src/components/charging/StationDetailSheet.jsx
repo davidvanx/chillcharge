@@ -32,7 +32,7 @@ export default function StationDetailSheet({ station, onClose, onStartCharging }
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-white rounded-t-[2rem] shadow-2xl max-h-[88vh] overflow-y-auto animate-in slide-in-from-bottom">
+      <div className="relative w-full max-w-md bg-white rounded-t-[2rem] shadow-2xl max-h-[88vh] overflow-y-auto animate-in slide-in-from-bottom no-scrollbar pb-safe">
         <div className="sticky top-0 bg-white pt-3 pb-2 flex justify-center">
           <div className="w-10 h-1.5 rounded-full bg-neutral-200" />
         </div>

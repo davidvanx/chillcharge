@@ -17,7 +17,7 @@ export default function PaymentSheet({ station, onClose, onConfirm }) {
   return (
     <div className="absolute inset-0 z-50 flex items-end justify-center" dir="rtl">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative w-full bg-white rounded-t-[2rem] shadow-2xl max-h-[82%] overflow-y-auto animate-in slide-in-from-bottom">
+      <div className="relative w-full bg-white rounded-t-[2rem] shadow-2xl max-h-[82%] overflow-y-auto animate-in slide-in-from-bottom no-scrollbar pb-safe">
         <div className="sticky top-0 bg-white pt-3 pb-2 flex justify-center">
           <div className="w-10 h-1.5 rounded-full bg-neutral-200" />
         </div>

@@ -316,7 +316,7 @@ export default function SettingsMenu({ open, onClose }) {
   return (
     <div className="absolute inset-0 z-50" dir="rtl">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={onClose} />
-      <div className="absolute top-0 right-0 h-full w-[86%] max-w-[330px] bg-white shadow-2xl flex flex-col animate-in slide-in-from-right">
+      <div className="absolute top-0 right-0 h-full w-[86%] max-w-[330px] bg-white shadow-2xl flex flex-col animate-in slide-in-from-right pt-safe pb-safe">
         <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
           <button
             onClick={active ? () => setActive(null) : onClose}
@@ -329,7 +329,7 @@ export default function SettingsMenu({ open, onClose }) {
         </div>
 
         {!currentItem ? (
-          <div className="flex-1 overflow-y-auto px-3 py-4 space-y-2">
+          <div className="flex-1 overflow-y-auto px-3 py-4 space-y-2 no-scrollbar">
             {items.map((it) => {
               const Icon = it.icon;
               return (
@@ -351,7 +351,7 @@ export default function SettingsMenu({ open, onClose }) {
             })}
           </div>
         ) : (
-          <div className="flex-1 overflow-y-auto px-4 py-4">
+          <div className="flex-1 overflow-y-auto px-4 py-4 no-scrollbar">
             <Screen />
           </div>
         )}
