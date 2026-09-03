@@ -96,7 +96,7 @@ export default function ChargingSession({ station, onEnd }) {
   if (phase === "done") {
     return (
       <motion.div
-        className="absolute inset-0 z-50 bg-gradient-to-b from-emerald-500 to-teal-600 flex flex-col items-center justify-center px-6 text-white text-center"
+        className="absolute inset-0 z-[70] bg-gradient-to-b from-emerald-500 to-teal-600 flex flex-col items-center justify-center px-6 text-white text-center"
         dir="rtl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -173,7 +173,7 @@ export default function ChargingSession({ station, onEnd }) {
   }
 
   return (
-    <div className="absolute inset-0 z-50 bg-gradient-to-b from-neutral-900 to-neutral-800 flex flex-col text-white" dir="rtl">
+    <div className="absolute inset-0 z-[70] bg-gradient-to-b from-neutral-900 to-neutral-800 flex flex-col text-white" dir="rtl">
       <div className="flex items-center justify-between px-5 pt-5">
         <div>
           <div className="text-[12px] text-emerald-400 font-semibold flex items-center gap-1.5">
