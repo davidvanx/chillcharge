@@ -1,8 +1,22 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, BatteryCharging, Check, Star, X, Phone } from "lucide-react";
+import { Zap, BatteryCharging, Check, Star, X, Phone, Bell } from "lucide-react";
 import { useSettings } from "@/components/charging/SettingsProvider";
 import { addReceipt } from "@/lib/receipts";
+
+function fire80Notification(stationName) {
+  try {
+    if ("vibrate" in navigator) navigator.vibrate([120, 60, 120]);
+  } catch {}
+  try {
+    if ("Notification" in window && Notification.permission === "granted") {
+      new Notification("הרכב הגיע ל-80% 🔋", {
+        body: `ניתן לסיים את הטעינה בעמדה ${stationName ?? ""}. ההמתנה הנוספת תאט משמעותית.`,
+        tag: "chillcharge-80",
+      });
+    }
+  } catch {}
+}
 
 const CAPACITY_KWH = 60;
 const R = 78;
@@ -20,10 +34,17 @@ export default function ChargingSession({ station, onEnd }) {
   const [progress, setProgress] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [notified80, setNotified80] = useState(false);
+  const [show80Popup, setShow80Popup] = useState(false);
   const [phase, setPhase] = useState("charging");
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const notifiedRef = useRef(false);
+
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission().catch(() => {});
+    }
+  }, []);
 
   useEffect(() => {
     if (phase !== "charging") return;
@@ -33,6 +54,8 @@ export default function ChargingSession({ station, onEnd }) {
         if (next >= 80 && !notifiedRef.current) {
           notifiedRef.current = true;
           setNotified80(true);
+          setShow80Popup(true);
+          fire80Notification(station.name);
         }
         if (next >= 100) {
           clearInterval(id);
@@ -176,6 +199,51 @@ export default function ChargingSession({ station, onEnd }) {
               <div className="text-[13px] font-bold">הרכב הגיע ל-80%</div>
               <div className="text-[11px] text-white/70">מומלץ לסיים את הטעינה בקרוב</div>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {show80Popup && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-center justify-center px-6"
+            dir="rtl"
+          >
+            <motion.div
+              initial={{ scale: 0.8, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 220, damping: 18 }}
+              className="w-full max-w-[300px] rounded-3xl bg-white p-6 text-center text-neutral-900 shadow-2xl"
+            >
+              <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
+                <Bell className="w-8 h-8 text-emerald-600" />
+              </div>
+              <h3 className="text-[18px] font-bold">הרכב הגיע ל-80% 🔋</h3>
+              <p className="text-[13px] text-neutral-500 mt-2 leading-relaxed">
+                מומלץ לסיים את הטעינה כעת. מעבר ל-80% הטעינה מאטה משמעותית, וההמתנה הנוספת כנראה לא כדאית.
+              </p>
+              <div className="mt-5 flex gap-2">
+                <button
+                  onClick={() => setShow80Popup(false)}
+                  className="flex-1 py-3 rounded-2xl bg-neutral-100 text-neutral-700 font-semibold text-[14px] active:scale-95 transition"
+                >
+                  המשך לטעון
+                </button>
+                <button
+                  onClick={() => {
+                    setShow80Popup(false);
+                    setPhase("done");
+                  }}
+                  className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-[14px] active:scale-95 transition shadow-lg shadow-emerald-500/30"
+                >
+                  סיים טעינה
+                </button>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
