@@ -218,7 +218,7 @@ function HomeInner() {
         </div>
 
         {/* List */}
-        <div className="px-5 pt-1 pb-4 space-y-3 flex-1 overflow-y-auto">
+        <div className="px-5 pt-1 pb-4 space-y-3 flex-1 min-h-0 overflow-y-auto">
           {loading || liveLoading ? (
             [0, 1, 2, 3].map((i) => (
               <div key={i} className="rounded-3xl bg-white border border-black/5 p-4 h-44 animate-pulse">
