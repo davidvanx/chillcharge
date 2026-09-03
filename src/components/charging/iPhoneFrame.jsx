@@ -2,9 +2,9 @@ import React from "react";
 
 export default function iPhoneFrame({ children }) {
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-neutral-900 to-black flex items-center justify-center p-6">
+    <div className="h-[100dvh] w-full overflow-hidden bg-gradient-to-b from-neutral-900 to-black flex items-center justify-center p-6">
       {/* iPhone 17 Pro device frame — always visible, scales to fit */}
-      <div className="w-[min(360px,82vw)] h-[min(780px,86vh)] rounded-[3.4rem] p-[4px] bg-gradient-to-b from-neutral-300 via-neutral-400 to-neutral-600 relative shadow-[0_40px_120px_rgba(0,0,0,0.6)]">
+      <div className="w-[min(360px,82vw)] h-[min(780px,82dvh)] rounded-[3.4rem] p-[4px] bg-gradient-to-b from-neutral-300 via-neutral-400 to-neutral-600 relative shadow-[0_40px_120px_rgba(0,0,0,0.6)]">
         {/* Titanium inner ring */}
         <div className="absolute inset-[3px] rounded-[3.2rem] bg-neutral-800 p-[10px]">
           <div className="relative w-full h-full rounded-[2.7rem] overflow-hidden bg-neutral-50">
