@@ -49,14 +49,14 @@ export default function AccessibilityMenu() {
     <>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="absolute bottom-24 right-4 z-40 w-12 h-12 rounded-full bg-neutral-900 text-white shadow-lg shadow-black/20 flex items-center justify-center active:scale-90 transition"
+        className="absolute bottom-24 right-4 z-[60] w-12 h-12 rounded-full bg-neutral-900 text-white shadow-lg shadow-black/20 flex items-center justify-center active:scale-90 transition"
         aria-label="נגישות"
       >
         <Accessibility className="w-6 h-6" />
       </button>
 
       {open && (
-        <div className="absolute bottom-40 right-4 z-40 w-64 max-w-[80%] rounded-2xl bg-white shadow-2xl border border-black/5 p-2 animate-in fade-in slide-in-from-bottom-2" dir="rtl">
+        <div className="absolute bottom-40 right-4 z-[70] w-64 max-w-[80%] rounded-2xl bg-white shadow-2xl border border-black/5 p-2 animate-in fade-in slide-in-from-bottom-2" dir="rtl">
           <div className="flex items-center justify-between px-2 py-2">
             <span className="text-[14px] font-bold text-neutral-900">נגישות</span>
             <button onClick={() => setOpen(false)} className="w-7 h-7 rounded-full bg-neutral-100 flex items-center justify-center">
