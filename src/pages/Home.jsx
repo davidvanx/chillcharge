@@ -101,7 +101,7 @@ function HomeInner() {
   if (settings.largeText) a11yStyle.zoom = 1.08;
 
   return (
-    <div className="h-full font-body text-neutral-900">
+    <div className="relative h-full font-body text-neutral-900">
       <div className={`mx-auto max-w-md h-full bg-gradient-to-b from-emerald-50/60 to-neutral-50 relative flex flex-col ${a11yClass}`} style={a11yStyle}>
         {/* Status bar */}
         <div className="sticky top-0 z-30 bg-emerald-50/70 backdrop-blur-xl">
