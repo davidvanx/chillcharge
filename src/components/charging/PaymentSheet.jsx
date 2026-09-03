@@ -1,14 +1,17 @@
 import React, { useState } from "react";
 import { X, Apple, CreditCard, Plus, Check, Zap } from "lucide-react";
 
-export default function PaymentSheet({ station, onClose }) {
+export default function PaymentSheet({ station, onClose, onConfirm }) {
   const [method, setMethod] = useState(null);
   const [done, setDone] = useState(false);
   if (!station) return null;
 
   const confirm = () => {
     setDone(true);
-    setTimeout(onClose, 1800);
+    setTimeout(() => {
+      onConfirm?.(station);
+      onClose();
+    }, 1800);
   };
 
   return (

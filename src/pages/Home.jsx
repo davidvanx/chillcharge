@@ -8,6 +8,7 @@ import StationDetailSheet from "@/components/charging/StationDetailSheet";
 import iPhoneFrame from "@/components/charging/iPhoneFrame";
 import SettingsMenu from "@/components/charging/SettingsMenu";
 import PaymentSheet from "@/components/charging/PaymentSheet";
+import ChargingSession from "@/components/charging/ChargingSession";
 import AccessibilityMenu from "@/components/charging/AccessibilityMenu";
 import { SettingsProvider, useSettings } from "@/components/charging/SettingsProvider";
 import { searchStationsNear } from "@/lib/chargingSearch";
@@ -25,6 +26,7 @@ function HomeInner() {
   const [liveLocation, setLiveLocation] = useState("");
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [payStation, setPayStation] = useState(null);
+  const [sessionStation, setSessionStation] = useState(null);
 
   useEffect(() => {
     base44.entities.ChargingStation.list("-created_date", 100)
@@ -270,7 +272,8 @@ function HomeInner() {
         }}
       />
       <SettingsMenu open={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      <PaymentSheet station={payStation} onClose={() => setPayStation(null)} />
+      <PaymentSheet station={payStation} onClose={() => setPayStation(null)} onConfirm={(s) => setSessionStation(s)} />
+      <ChargingSession station={sessionStation} onEnd={() => setSessionStation(null)} />
       <AccessibilityMenu />
     </div>
   );
