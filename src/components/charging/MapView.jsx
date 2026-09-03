@@ -1,7 +1,22 @@
-import React from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import React, { useEffect } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+
+function MapResizer() {
+  const map = useMap();
+  useEffect(() => {
+    const r = requestAnimationFrame(() => map.invalidateSize());
+    const ro = new ResizeObserver(() => map.invalidateSize());
+    const el = map.getContainer();
+    ro.observe(el);
+    return () => {
+      cancelAnimationFrame(r);
+      ro.disconnect();
+    };
+  }, [map]);
+  return null;
+}
 
 const cityCoords = {
   "Tel Aviv": [32.0853, 34.7818],
@@ -59,6 +74,7 @@ export default function MapView({ stations, onSelect }) {
     <div className="flex-1 min-h-0 px-3 pb-3 relative z-0">
       <div className="h-full w-full rounded-2xl overflow-hidden border border-black/5 shadow-sm bg-neutral-100">
         <MapContainer center={center} zoom={12} scrollWheelZoom={false} style={{ height: "100%", width: "100%" }}>
+          <MapResizer />
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; OpenStreetMap'
