@@ -8,7 +8,7 @@ const amenityMeta = {
   shop: { icon: ShoppingBag, label: "Shopping" },
 };
 
-export default function StationDetailSheet({ station, onClose }) {
+export default function StationDetailSheet({ station, onClose, onStartCharging }) {
   if (!station) return null;
   const isDC = station.type === "DC";
 
@@ -104,12 +104,19 @@ export default function StationDetailSheet({ station, onClose }) {
             </div>
           )}
 
-          <div className="mt-5 flex gap-2.5">
-            <button className="flex-1 h-12 rounded-2xl bg-neutral-100 font-semibold text-[14px] text-neutral-800 active:scale-95 transition">
+          <button
+            onClick={() => onStartCharging?.(station)}
+            dir="rtl"
+            className="mt-5 w-full h-12 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 font-bold text-[15px] text-white flex items-center justify-center gap-2 active:scale-95 transition shadow-lg shadow-emerald-500/30"
+          >
+            <Zap className="w-4 h-4 fill-white" /> התחל טעינה
+          </button>
+          <div className="mt-2.5 flex gap-2.5">
+            <button className="flex-1 h-11 rounded-2xl bg-neutral-100 font-semibold text-[13px] text-neutral-800 active:scale-95 transition">
               Save
             </button>
-            <button className="flex-[1.6] h-12 rounded-2xl bg-neutral-900 font-semibold text-[14px] text-white flex items-center justify-center gap-2 active:scale-95 transition shadow-lg">
-              <Navigation className="w-4 h-4" />
+            <button className="flex-1 h-11 rounded-2xl bg-neutral-900 font-semibold text-[13px] text-white flex items-center justify-center gap-1.5 active:scale-95 transition">
+              <Navigation className="w-3.5 h-3.5" />
               Navigate
             </button>
           </div>

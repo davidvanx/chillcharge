@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
-import { Zap, Search, LocateFixed, SlidersHorizontal } from "lucide-react";
+import { Zap, Search, LocateFixed, SlidersHorizontal, Menu } from "lucide-react";
 import StationCard from "@/components/charging/StationCard";
 import FilterTabs from "@/components/charging/FilterTabs";
 import SortMenu from "@/components/charging/SortMenu";
 import StationDetailSheet from "@/components/charging/StationDetailSheet";
 import iPhoneFrame from "@/components/charging/iPhoneFrame";
+import SettingsMenu from "@/components/charging/SettingsMenu";
+import PaymentSheet from "@/components/charging/PaymentSheet";
+import AccessibilityMenu from "@/components/charging/AccessibilityMenu";
 import { searchStationsNear } from "@/lib/chargingSearch";
 
 export default function Home() {
@@ -18,6 +21,8 @@ export default function Home() {
   const [liveMode, setLiveMode] = useState(false);
   const [liveLoading, setLiveLoading] = useState(false);
   const [liveLocation, setLiveLocation] = useState("");
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [payStation, setPayStation] = useState(null);
 
   useEffect(() => {
     base44.entities.ChargingStation.list("-created_date", 100)
@@ -98,11 +103,20 @@ export default function Home() {
                   <LocateFixed className="w-3 h-3" /> Charging near you
                 </p>
               </div>
-              <img
-                src="https://media.base44.com/images/public/6a9882e54bedc57ccf9f0c16/018895c7e_generated_image.png"
-                alt="Chillcharge"
-                className="w-11 h-11 rounded-2xl shadow-lg object-cover ring-1 ring-emerald-200"
-              />
+              <div className="flex items-center gap-2.5">
+                <button
+                  onClick={() => setSettingsOpen(true)}
+                  className="w-10 h-10 rounded-2xl bg-white border border-black/5 shadow-sm flex items-center justify-center active:scale-90 transition"
+                  aria-label="תפריט"
+                >
+                  <Menu className="w-5 h-5 text-neutral-700" />
+                </button>
+                <img
+                  src="https://media.base44.com/images/public/6a9882e54bedc57ccf9f0c16/018895c7e_generated_image.png"
+                  alt="Chillcharge"
+                  className="w-11 h-11 rounded-2xl shadow-lg object-cover ring-1 ring-emerald-200"
+                />
+              </div>
             </div>
           </div>
 
@@ -229,7 +243,17 @@ export default function Home() {
         </div>
       </div>
 
-      <StationDetailSheet station={selected} onClose={() => setSelected(null)} />
+      <StationDetailSheet
+        station={selected}
+        onClose={() => setSelected(null)}
+        onStartCharging={(s) => {
+          setSelected(null);
+          setPayStation(s);
+        }}
+      />
+      <SettingsMenu open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <PaymentSheet station={payStation} onClose={() => setPayStation(null)} />
+      <AccessibilityMenu />
     </div>
     </iPhoneFrame>
   );
