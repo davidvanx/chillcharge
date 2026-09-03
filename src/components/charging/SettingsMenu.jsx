@@ -4,7 +4,7 @@ import { useSettings } from "@/components/charging/SettingsProvider";
 import { getReceipts, clearReceipts } from "@/lib/receipts";
 import {
   X, Settings, User, Shield, Mail, ChevronLeft, Bell, Ruler, Coins,
-  MapPin, Check, Trash2, Send, Loader2, Car, Hash, Receipt, FileText,
+  MapPin, Check, Trash2, Send, Loader2, Car, Hash, Receipt, FileText, Languages,
 } from "lucide-react";
 
 const items = [
@@ -78,6 +78,29 @@ function SettingsScreen() {
       <div className="p-3.5 rounded-2xl bg-neutral-50">
         <div className="text-[13px] font-semibold text-neutral-800 mb-2">מטבע</div>
         <Segmented value={settings.currency} onChange={(v) => update({ currency: v })} options={[{ value: "₪", label: "₪ ש״ח" }, { value: "€", label: "€ יורו" }, { value: "$", label: "$ דולר" }]} />
+      </div>
+      <div className="p-3.5 rounded-2xl bg-neutral-50">
+        <div className="flex items-center gap-2 mb-2">
+          <Languages className="w-4 h-4 text-neutral-500" />
+          <div className="text-[13px] font-semibold text-neutral-800">שפה</div>
+        </div>
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            { value: "he", label: "עברית" },
+            { value: "en", label: "English" },
+            { value: "ar", label: "العربية" },
+            { value: "ru", label: "Русский" },
+          ].map((o) => (
+            <button
+              key={o.value}
+              onClick={() => update({ language: o.value })}
+              className={`py-2.5 rounded-xl text-[13px] font-semibold border transition flex items-center justify-center gap-1.5 ${settings.language === o.value ? "bg-emerald-500 text-white border-emerald-500" : "bg-white text-neutral-600 border-neutral-200"}`}
+            >
+              {settings.language === o.value && <Check className="w-3.5 h-3.5" />}
+              {o.label}
+            </button>
+          ))}
+        </div>
       </div>
       <Field icon={MapPin} label="עיר ברירת מחדל לחיפוש" value={settings.defaultCity} onChange={(v) => update({ defaultCity: v })} placeholder="לדוגמה: תל אביב" />
     </div>

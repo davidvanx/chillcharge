@@ -11,6 +11,7 @@ const defaultSettings = {
   units: "km",
   currency: "₪",
   defaultCity: "",
+  language: "he",
   // privacy
   shareLocation: true,
   saveHistory: true,
