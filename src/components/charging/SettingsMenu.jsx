@@ -1,15 +1,18 @@
 import React, { useState } from "react";
 import { base44 } from "@/api/base44Client";
 import { useSettings } from "@/components/charging/SettingsProvider";
+import { getReceipts, clearReceipts } from "@/lib/receipts";
 import {
   X, Settings, User, Shield, Mail, ChevronLeft, Bell, Ruler, Coins,
-  MapPin, Check, Trash2, Send, Loader2, Car, Hash,
+  MapPin, Check, Trash2, Send, Loader2, Car, Hash, Receipt, FileText,
 } from "lucide-react";
 
 const items = [
   { id: "settings", label: "הגדרות", icon: Settings, desc: "העדפות, יחידות, מטבע" },
   { id: "personal", label: "פרטים אישיים", icon: User, desc: "שם, אימייל, פרטי רכב" },
+  { id: "receipts", label: "הקבלות שלי", icon: Receipt, desc: "היסטוריית טעינות ותשלומים" },
   { id: "privacy", label: "פרטיות", icon: Shield, desc: "מיקום, היסטוריה, שיתוף" },
+  { id: "policy", label: "תצהיר פרטיות", icon: FileText, desc: "מדיניות הפרטיות המלאה" },
   { id: "contact", label: "יצירת קשר", icon: Mail, desc: "תמיכה, משוב, דיווח תקלה" },
 ];
 
@@ -183,10 +186,101 @@ function ContactScreen() {
   );
 }
 
+function fmtDur(sec) {
+  const m = Math.floor(sec / 60);
+  const s = Math.floor(sec % 60);
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
+function ReceiptsScreen() {
+  const [receipts, setReceipts] = useState(() => getReceipts());
+  const [cleared, setCleared] = useState(false);
+
+  const fmtDate = (iso) => {
+    try {
+      const d = new Date(iso);
+      return d.toLocaleDateString("he-IL") + " " + d.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" });
+    } catch {
+      return "";
+    }
+  };
+
+  if (receipts.length === 0) {
+    return (
+      <div className="text-center py-16 text-neutral-400">
+        <Receipt className="w-8 h-8 mx-auto mb-3 opacity-40" />
+        <p className="text-[14px] font-medium">אין עדיין קבלות</p>
+        <p className="text-[12px] text-neutral-300 mt-1">הקבלות יופיעו כאן לאחר טעינות</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {receipts.map((r) => (
+        <div key={r.id} className="rounded-2xl bg-neutral-50 p-4">
+          <div className="flex items-center justify-between">
+            <div className="text-[14px] font-bold text-neutral-900 truncate">{r.station}</div>
+            <div className="text-[14px] font-bold text-emerald-600 shrink-0">{r.currency}{r.cost.toFixed(2)}</div>
+          </div>
+          {r.network && <div className="text-[11px] text-neutral-400 mt-0.5">{r.network}</div>}
+          <div className="flex items-center justify-between mt-2 text-[12px] text-neutral-500">
+            <span>{fmtDate(r.date)}</span>
+            <span>{r.kwh.toFixed(1)} kWh · {fmtDur(r.durationSec)}</span>
+          </div>
+        </div>
+      ))}
+      <button
+        onClick={() => {
+          clearReceipts();
+          setReceipts([]);
+          setCleared(true);
+          setTimeout(() => setCleared(false), 1500);
+        }}
+        className="w-full h-12 rounded-2xl bg-red-50 text-red-600 font-semibold text-[14px] flex items-center justify-center gap-2 active:scale-95 transition"
+      >
+        <Trash2 className="w-4 h-4" />
+        {cleared ? "נמחקו" : "מחק את כל הקבלות"}
+      </button>
+    </div>
+  );
+}
+
+function PolicyScreen() {
+  const sections = [
+    { t: "1. מבוא", b: "תצהיר פרטיות זה מתאר כיצד אפליקציית Chillcharge (להלן \"האפליקציה\") אוספת, משתמשת, מאחסנת ומגנה על המידע האישי שלך. בשימוש באפליקציה הנך מאשר/ת את הוראות תצהיר זה." },
+    { t: "2. מידע שנאסף", b: "האפליקציה אוספת מידע שתמסר/י מרצונך (שם, אימייל, פרטי רכב), מידע על מיקומך על מנת להציג עמדות טעינה בקרבת מקום, ונתוני טעינה כגון כמות אנרגיה, עלות ומשך הטעינה לשם הפקת קבלות." },
+    { t: "3. שימוש במידע", b: "המידע משמש להצגת עמדות טעינה רלוונטיות, חישוב עלויות, הפקת קבלות, שמירת היסטוריית טעינות, שליחת התראות ושיפור חוויית השימוש. לא נשתמש במידע לשיווק ללא הסכמתך." },
+    { t: "4. שיתוף מידע", b: "איננו מוכרים את מידעך. מידע עשוי להימסר לצד שלישי רק כאשר הדבר נדרש על פי דין או לשם ביצוע עסקת תשלום מול ספקי התשלומים שבחרת." },
+    { t: "5. אבטחת מידע", b: "ננקוט אמצעים סבירים להגן על מידעך מפני גישה בלתי מורשית. עם זאת, אין להבטיח אבטחה מוחלטת של מערכות מידע." },
+    { t: "6. שמירת מידע ומחיקתו", b: "נתוני הטעינה והקבלות נשמרים במכשירך. באפשרותך למחוק את היסטוריית הטעינות והקבלות בכל עת דרך מסך הפרטיות או מסך הקבלות שבהגדרות." },
+    { t: "7. זכויותיך", b: "הנך זכאי/ת לעיין במידע שנשמר עליך, לבקש את מחיקתו, ולבטל הרשאות (כגון שיתוף מיקום) בכל עת דרך הגדרות האפליקציה או הגדרות המכשיר." },
+    { t: "8. ילדים", b: "האפליקציה אינה מיועדת לילדים מתחת לגיל 18, ואיננו אוספים ביודעין מידע מילדים." },
+    { t: "9. שינויים בתצהיר", b: "אנו רשאים לעדכן תצהיר זה מעת לעת. הגרסה העדכנית תפורסם באפליקציה." },
+    { t: "10. יצירת קשר", b: "לשאלות בנוגע לפרטיות ניתן לפנות דרך מסך \"יצירת קשר\" שבהגדרות." },
+  ];
+  return (
+    <div className="space-y-4 text-[13px] leading-relaxed text-neutral-600">
+      <div className="rounded-2xl bg-emerald-50 p-4">
+        <h3 className="text-[15px] font-bold text-emerald-700">תצהיר פרטיות</h3>
+        <p className="text-[12px] text-emerald-600 mt-1">עודכן לאחרונה: ספטמבר 2026</p>
+      </div>
+      {sections.map((s) => (
+        <div key={s.t}>
+          <h4 className="text-[13px] font-bold text-neutral-900">{s.t}</h4>
+          <p className="mt-1">{s.b}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 const screens = {
   settings: SettingsScreen,
   personal: PersonalScreen,
+  receipts: ReceiptsScreen,
   privacy: PrivacyScreen,
+  policy: PolicyScreen,
   contact: ContactScreen,
 };
 

@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Zap, BatteryCharging, Check, Star, X } from "lucide-react";
 import { useSettings } from "@/components/charging/SettingsProvider";
+import { addReceipt } from "@/lib/receipts";
 
 const CAPACITY_KWH = 60;
 const R = 78;
@@ -42,6 +43,23 @@ export default function ChargingSession({ station, onEnd }) {
       setElapsed((e) => e + 0.25);
     }, 250);
     return () => clearInterval(id);
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase === "done" && station) {
+      const kwhVal = (progress / 100) * CAPACITY_KWH;
+      addReceipt({
+        id: Date.now(),
+        station: station.name,
+        network: station.network,
+        kwh: kwhVal,
+        cost: kwhVal * station.price_per_kwh,
+        currency,
+        durationSec: elapsed,
+        date: new Date().toISOString(),
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
 
   if (!station) return null;
