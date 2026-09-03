@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSettings } from "@/components/charging/SettingsProvider";
 import { Accessibility, X, Type, Contrast, Volume2, Gauge, Focus, Moon, Subtitles, Languages } from "lucide-react";
 
-const LS_POS = "chillcharge_a11y_pos";
+const LS_POS = "chillcharge_a11y_pos_v2";
 const BTN = 52;
 
 function speak(text) {
@@ -55,6 +55,18 @@ export default function AccessibilityMenu() {
       ry: Math.max(8, Math.min(ry, ch - BTN - 8)),
     };
   };
+
+  // Re-clamp into view on mount and resize (fixes stale localStorage positions)
+  useEffect(() => {
+    const fix = () => setPos((p) => clamp(p.rx, p.ry));
+    const t = setTimeout(fix, 100);
+    window.addEventListener("resize", fix);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("resize", fix);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onDown = (e) => {
     e.preventDefault();
