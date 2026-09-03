@@ -1,6 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { X, Zap, MapPin, Star, CheckCircle2, Clock, Navigation, Wifi, Coffee, ShoppingBag, Plug } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSettings } from "@/components/charging/SettingsProvider";
 
 const amenityMeta = {
   wifi: { icon: Wifi, label: "Wi-Fi" },
@@ -9,8 +10,24 @@ const amenityMeta = {
 };
 
 export default function StationDetailSheet({ station, onClose, onStartCharging }) {
+  const { settings } = useSettings();
+
+  useEffect(() => {
+    if (settings.voice && station && "speechSynthesis" in window) {
+      const u = new SpeechSynthesisUtterance(
+        `${station.name}, ${station.power_kw} קילוואט, מחיר ${station.price_per_kwh} לקילוואטשעה`
+      );
+      u.lang = "he-IL";
+      window.speechSynthesis.speak(u);
+      return () => window.speechSynthesis.cancel();
+    }
+  }, [station, settings.voice]);
+
   if (!station) return null;
   const isDC = station.type === "DC";
+  const currency = settings.currency || station.currency || "₪";
+  const distVal = settings.units === "mi" ? (station.distance_km ?? 0) * 0.6214 : station.distance_km;
+  const distUnit = settings.units === "mi" ? "mi" : "km";
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center">
@@ -38,7 +55,7 @@ export default function StationDetailSheet({ station, onClose, onStartCharging }
             <span className="text-neutral-300">•</span>
             <span className="flex items-center gap-1">
               <MapPin className="w-3.5 h-3.5" />
-              {station.distance_km?.toFixed(1)} km
+              {distVal?.toFixed(1)} {distUnit}
             </span>
           </div>
 
@@ -60,7 +77,7 @@ export default function StationDetailSheet({ station, onClose, onStartCharging }
             </div>
             <div className="rounded-2xl bg-neutral-50 p-3 text-center">
               <div className="text-[11px] text-neutral-400">Price</div>
-              <div className="text-sm font-bold text-neutral-900 mt-0.5">{station.currency}{station.price_per_kwh.toFixed(2)}</div>
+              <div className="text-sm font-bold text-neutral-900 mt-0.5">{currency}{station.price_per_kwh.toFixed(2)}</div>
             </div>
           </div>
 

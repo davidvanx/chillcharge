@@ -9,9 +9,11 @@ import iPhoneFrame from "@/components/charging/iPhoneFrame";
 import SettingsMenu from "@/components/charging/SettingsMenu";
 import PaymentSheet from "@/components/charging/PaymentSheet";
 import AccessibilityMenu from "@/components/charging/AccessibilityMenu";
+import { SettingsProvider, useSettings } from "@/components/charging/SettingsProvider";
 import { searchStationsNear } from "@/lib/chargingSearch";
 
-export default function Home() {
+function HomeInner() {
+  const { settings } = useSettings();
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
@@ -29,6 +31,11 @@ export default function Home() {
       .then((data) => setStations(data))
       .catch(() => setStations([]))
       .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    if (settings.defaultCity) setQuery(settings.defaultCity);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const runLiveSearch = async (location) => {
@@ -79,10 +86,21 @@ export default function Home() {
   const dcCount = stations.filter((s) => s.type === "DC").length;
   const acCount = stations.filter((s) => s.type === "AC").length;
 
+  const a11yClass = [
+    settings.dark && "a11y-dark",
+    settings.motion && "a11y-motion",
+    settings.focus && "a11y-focus",
+  ].filter(Boolean).join(" ");
+  const a11yStyle = {};
+  const filters = [];
+  if (settings.dark) filters.push("invert(1)", "hue-rotate(180deg)");
+  if (settings.contrast) filters.push("contrast(1.3)", "saturate(1.25)");
+  if (filters.length) a11yStyle.filter = filters.join(" ");
+  if (settings.largeText) a11yStyle.zoom = 1.08;
+
   return (
-    <iPhoneFrame>
     <div className="h-full font-body text-neutral-900">
-      <div className="mx-auto max-w-md h-full bg-gradient-to-b from-emerald-50/60 to-neutral-50 relative flex flex-col">
+      <div className={`mx-auto max-w-md h-full bg-gradient-to-b from-emerald-50/60 to-neutral-50 relative flex flex-col ${a11yClass}`} style={a11yStyle}>
         {/* Status bar */}
         <div className="sticky top-0 z-30 bg-emerald-50/70 backdrop-blur-xl">
           <div className="flex items-center justify-between px-6 pt-3 pb-1 text-[12px] font-semibold text-neutral-900">
@@ -255,6 +273,15 @@ export default function Home() {
       <PaymentSheet station={payStation} onClose={() => setPayStation(null)} />
       <AccessibilityMenu />
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <iPhoneFrame>
+      <SettingsProvider>
+        <HomeInner />
+      </SettingsProvider>
     </iPhoneFrame>
   );
 }

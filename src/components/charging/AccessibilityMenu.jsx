@@ -1,14 +1,23 @@
 import React, { useState } from "react";
+import { useSettings } from "@/components/charging/SettingsProvider";
 import { Accessibility, X, Type, Contrast, Volume2, Gauge, Focus, Moon, Subtitles, Languages } from "lucide-react";
 
-function Toggle({ icon: Icon, label, on, set }) {
+function speak(text) {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = "he-IL";
+  window.speechSynthesis.speak(u);
+}
+
+function Toggle({ icon: Icon, label, on, onChange }) {
   return (
-    <button onClick={() => set(!on)} className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 text-right">
+    <button onClick={onChange} className="w-full flex items-center justify-between p-2.5 rounded-xl hover:bg-neutral-50 text-right">
       <div className="flex items-center gap-3">
         <Icon className="w-5 h-5 text-neutral-500" />
         <span className="text-[13px] font-medium text-neutral-700">{label}</span>
       </div>
-      <div className={`w-10 h-6 rounded-full relative transition ${on ? "bg-emerald-500" : "bg-neutral-200"}`}>
+      <div className={`w-10 h-6 rounded-full relative transition shrink-0 ${on ? "bg-emerald-500" : "bg-neutral-200"}`}>
         <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all ${on ? "left-0.5" : "right-0.5"}`} />
       </div>
     </button>
@@ -16,18 +25,25 @@ function Toggle({ icon: Icon, label, on, set }) {
 }
 
 export default function AccessibilityMenu() {
+  const { settings, update } = useSettings();
   const [open, setOpen] = useState(false);
-  const [opts, setOpts] = useState({
-    largeText: false,
-    contrast: false,
-    voice: false,
-    motion: false,
-    focus: false,
-    dark: false,
-    subtitles: false,
-    lang: false,
-  });
-  const set = (k) => (v) => setOpts((s) => ({ ...s, [k]: v }));
+
+  const options = [
+    { key: "largeText", icon: Type, label: "טקסט מוגדל" },
+    { key: "contrast", icon: Contrast, label: "ניגודיות גבוהה" },
+    { key: "voice", icon: Volume2, label: "הקראה בקול" },
+    { key: "motion", icon: Gauge, label: "האטת אנימציות" },
+    { key: "focus", icon: Focus, label: "מסגרת ממוקדת" },
+    { key: "dark", icon: Moon, label: "מצב כהה" },
+    { key: "subtitles", icon: Subtitles, label: "כתוביות ותיאורים" },
+    { key: "translate", icon: Languages, label: "תרגום שפה" },
+  ];
+
+  const toggle = (key) => {
+    const next = !settings[key];
+    update({ [key]: next });
+    if (key === "voice") speak(next ? "הקראה בקול הופעלה" : "הקראה בקול בוטלה");
+  };
 
   return (
     <>
@@ -48,14 +64,9 @@ export default function AccessibilityMenu() {
             </button>
           </div>
           <div className="max-h-[60vh] overflow-y-auto">
-            <Toggle icon={Type} label="טקסט מוגדל" on={opts.largeText} set={set("largeText")} />
-            <Toggle icon={Contrast} label="ניגודיות גבוהה" on={opts.contrast} set={set("contrast")} />
-            <Toggle icon={Volume2} label="הקראה בקול" on={opts.voice} set={set("voice")} />
-            <Toggle icon={Gauge} label="האטת אנימציות" on={opts.motion} set={set("motion")} />
-            <Toggle icon={Focus} label="מסגרת ממוקדת" on={opts.focus} set={set("focus")} />
-            <Toggle icon={Moon} label="מצב כהה" on={opts.dark} set={set("dark")} />
-            <Toggle icon={Subtitles} label="כתוביות ותיאורים" on={opts.subtitles} set={set("subtitles")} />
-            <Toggle icon={Languages} label="תרגום שפה" on={opts.lang} set={set("lang")} />
+            {options.map((o) => (
+              <Toggle key={o.key} icon={o.icon} label={o.label} on={settings[o.key]} onChange={() => toggle(o.key)} />
+            ))}
           </div>
         </div>
       )}

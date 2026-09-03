@@ -1,6 +1,7 @@
 import React from "react";
 import { Zap, MapPin, Star, CheckCircle2, Clock, Wifi, Coffee, ShoppingBag } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSettings } from "@/components/charging/SettingsProvider";
 
 const amenityIcon = {
   wifi: Wifi,
@@ -9,6 +10,8 @@ const amenityIcon = {
 };
 
 export default function StationCard({ station, isBestValue, onClick }) {
+  const { settings } = useSettings();
+  const currency = settings.currency || station.currency || "₪";
   const isDC = station.type === "DC";
   const occupancyPct = station.total ? ((station.total - station.available) / station.total) * 100 : 0;
 
@@ -71,7 +74,7 @@ export default function StationCard({ station, isBestValue, onClick }) {
         <div>
           <div className="text-[11px] text-neutral-400 leading-none">Price</div>
           <div className="text-[17px] font-bold text-neutral-900 leading-tight mt-0.5">
-            {station.currency}{station.price_per_kwh.toFixed(2)}
+            {currency}{station.price_per_kwh.toFixed(2)}
             <span className="text-[11px] font-medium text-neutral-400 ml-0.5">/kWh</span>
           </div>
         </div>
