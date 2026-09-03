@@ -4,7 +4,7 @@ import { useSettings } from "@/components/charging/SettingsProvider";
 import { getReceipts, clearReceipts } from "@/lib/receipts";
 import {
   X, Settings, User, Shield, Mail, ChevronLeft, Bell, Ruler, Coins,
-  MapPin, Check, Trash2, Send, Loader2, Car, Hash, Receipt, FileText, Languages,
+  MapPin, Check, Trash2, Send, Loader2, Car, Hash, Receipt, FileText, Languages, Phone,
 } from "lucide-react";
 
 const items = [
@@ -13,7 +13,7 @@ const items = [
   { id: "receipts", label: "הקבלות שלי", icon: Receipt, desc: "היסטוריית טעינות ותשלומים" },
   { id: "privacy", label: "פרטיות", icon: Shield, desc: "מיקום, היסטוריה, שיתוף" },
   { id: "policy", label: "תצהיר פרטיות", icon: FileText, desc: "מדיניות הפרטיות המלאה" },
-  { id: "contact", label: "יצירת קשר", icon: Mail, desc: "תמיכה, משוב, דיווח תקלה" },
+  { id: "contact", label: "חברות טעינה", icon: Phone, desc: "מספרי שירות לקוחות" },
 ];
 
 function Toggle({ icon: Icon, label, on, onChange }) {
@@ -161,50 +161,46 @@ function PrivacyScreen() {
   );
 }
 
+const chargingCompanies = [
+  { name: "אפקון", en: "ON-EV", phone: "*2108" },
+  { name: "אי-וי אדג'", en: "EV-Edge", phone: "*9704" },
+  { name: "סונול EVI", en: "Sonol EVI", phone: "*3389" },
+  { name: "ג'ינרג'י", en: "Gnrgy", phone: "*3847" },
+  { name: "פז Charge", en: "Paz Charge", phone: "09-8631188" },
+  { name: "סלו צ'ארג'", en: "CelloCharge", phone: "074-712-7839" },
+  { name: "גרינספוט", en: "Greenspot", phone: "1-800-201-205" },
+  { name: "אי וי סמארט", en: "EV Smart Charge", phone: "03-7702288" },
+  { name: "ניסקו", en: "Nisko EV", phone: "072-2400600" },
+  { name: "וולטק", en: "VOLTEC", phone: "054-9621819" },
+  { name: "ווי-צ'ארג'", en: "WeCharge", phone: "03-7201952" },
+  { name: "אי-וי אנרג'י", en: "EV Energy", phone: "077-804-5600" },
+];
+
 function ContactScreen() {
-  const { profile } = useSettings();
-  const [form, setForm] = useState({ name: profile.name || "", email: profile.email || "", message: "" });
-  const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState(false);
-
-  const send = async () => {
-    if (!form.email || !form.message) return;
-    setSending(true);
-    try {
-      await base44.integrations.Core.SendEmail({
-        to: form.email,
-        subject: "יצירת קשר - Chillcharge",
-        body: `שם: ${form.name}\nאימייל: ${form.email}\n\n${form.message}`,
-      });
-      setSent(true);
-      setForm((f) => ({ ...f, message: "" }));
-    } catch {}
-    setSending(false);
-    setTimeout(() => setSent(false), 2500);
-  };
-
   return (
-    <div className="space-y-3">
-      <Field icon={User} label="שם" value={form.name} onChange={(v) => setForm((f) => ({ ...f, name: v }))} placeholder="השם שלך" />
-      <Field icon={Mail} label="אימייל לתשובה" type="email" value={form.email} onChange={(v) => setForm((f) => ({ ...f, email: v }))} placeholder="you@example.com" />
-      <div>
-        <label className="text-[12px] font-medium text-neutral-500">הודעה</label>
-        <textarea
-          value={form.message}
-          onChange={(e) => setForm((f) => ({ ...f, message: e.target.value }))}
-          placeholder="כתוב את הפנייה שלך…"
-          rows={4}
-          className="mt-1 w-full p-3 rounded-xl border border-neutral-200 bg-white outline-none focus:border-emerald-400 text-[14px] text-neutral-800 placeholder:text-neutral-300 resize-none"
-        />
+    <div className="space-y-2.5">
+      <div className="rounded-2xl bg-emerald-50 p-3.5 mb-1">
+        <p className="text-[13px] font-semibold text-emerald-700">שירות לקוחות — חברות טעינה בישראל</p>
+        <p className="text-[12px] text-emerald-600 mt-0.5">לחץ על מספר לחיוג ישיר</p>
       </div>
-      <button
-        onClick={send}
-        disabled={sending || !form.email || !form.message}
-        className="w-full h-12 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-[14px] flex items-center justify-center gap-2 active:scale-95 transition shadow-lg shadow-emerald-500/30 disabled:opacity-50"
-      >
-        {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : sent ? <Check className="w-4 h-4" /> : <Send className="w-4 h-4" />}
-        {sending ? "שולח…" : sent ? "נשלח! נחזור אליך" : "שלח פנייה"}
-      </button>
+      {chargingCompanies.map((c, i) => (
+        <a
+          key={i}
+          href={`tel:${c.phone.replace(/[*-]/g, "")}`}
+          className="flex items-center justify-between p-3.5 rounded-2xl bg-neutral-50 active:bg-neutral-100 transition"
+        >
+          <div className="flex items-center gap-3">
+            <span className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm shrink-0">
+              <Phone className="w-4 h-4 text-emerald-600" />
+            </span>
+            <div>
+              <div className="text-[14px] font-bold text-neutral-900">{c.name}</div>
+              <div className="text-[11px] text-neutral-400">{c.en}</div>
+            </div>
+          </div>
+          <span className="text-[15px] font-bold text-emerald-600 tracking-wide" dir="ltr">{c.phone}</span>
+        </a>
+      ))}
     </div>
   );
 }
