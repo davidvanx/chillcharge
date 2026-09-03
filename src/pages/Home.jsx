@@ -270,7 +270,7 @@ function HomeInner() {
 
         {/* Bottom tab bar */}
         <div className="shrink-0 px-3 pb-3 pt-1">
-          <div className="relative z-[1000] rounded-3xl bg-white/90 backdrop-blur-xl border border-black/5 shadow-[0_-2px_20px_rgba(0,0,0,0.08)] flex items-center justify-around py-2.5">
+          <div className="relative z-30 rounded-3xl bg-white/90 backdrop-blur-xl border border-black/5 shadow-[0_-2px_20px_rgba(0,0,0,0.08)] flex items-center justify-around py-2.5">
             <button onClick={() => setView("list")} className={cn("flex flex-col items-center gap-0.5 transition", view === "list" ? "text-emerald-600" : "text-neutral-400")}>
               <Zap className={cn("w-5 h-5", view === "list" && "fill-emerald-500 text-emerald-500")} />
               <span className="text-[10px] font-semibold">עמדות</span>
