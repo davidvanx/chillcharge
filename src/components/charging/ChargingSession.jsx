@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, BatteryCharging, Check, Star, X } from "lucide-react";
+import { Zap, BatteryCharging, Check, Star, X, Phone } from "lucide-react";
 import { useSettings } from "@/components/charging/SettingsProvider";
 import { addReceipt } from "@/lib/receipts";
 
@@ -232,7 +232,20 @@ export default function ChargingSession({ station, onEnd }) {
         </div>
       </div>
 
-      <div className="px-5 pb-6">
+      <div className="px-5 pb-6 space-y-3">
+        <a
+          href="tel:*2422"
+          className="w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 flex items-center gap-3 active:scale-95 transition"
+        >
+          <span className="w-9 h-9 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
+            <Phone className="w-4 h-4 text-emerald-400" />
+          </span>
+          <div className="flex-1 text-right">
+            <div className="text-[13px] font-semibold text-white">תמיכה וסיוע</div>
+            <div className="text-[11px] text-white/60">ליצירת קשר עם התמיכה חייגו</div>
+          </div>
+          <span className="text-[16px] font-bold text-emerald-400 tracking-wide" dir="ltr">*2422</span>
+        </a>
         <button onClick={stop} className="w-full py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white font-semibold text-[15px] active:scale-95 transition">
           עצור טעינה
         </button>

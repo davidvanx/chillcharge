@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Apple, CreditCard, Plus, Check, Zap } from "lucide-react";
+import { X, Apple, CreditCard, Plus, Check, Zap, Lock } from "lucide-react";
 
 export default function PaymentSheet({ station, onClose, onConfirm }) {
   const [method, setMethod] = useState(null);
@@ -87,10 +87,20 @@ export default function PaymentSheet({ station, onClose, onConfirm }) {
                 </div>
               )}
 
+              <div className="mt-4 rounded-2xl bg-amber-50 border border-amber-200 p-3.5 flex items-start gap-2.5 text-right">
+                <Lock className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <div className="text-[12px] font-bold text-amber-800">החזקה בכרטיס בסך 200 ₪</div>
+                  <div className="text-[11px] text-amber-700/90 mt-0.5 leading-relaxed">
+                    בתחילת הטעינה תוחזק יתרה זמנית של 200 ₪. ההפרש בין עלות הטעינה בפועל לבין ההחזקה יוחזר לחשבונך במלואו וללא עמלות.
+                  </div>
+                </div>
+              </div>
+
               <button
                 onClick={confirm}
                 disabled={!method}
-                className="mt-5 w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-[15px] flex items-center justify-center gap-2 disabled:opacity-40 active:scale-95 transition shadow-lg shadow-emerald-500/30"
+                className="mt-3 w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-[15px] flex items-center justify-center gap-2 disabled:opacity-40 active:scale-95 transition shadow-lg shadow-emerald-500/30"
               >
                 <Zap className="w-4 h-4 fill-white" />
                 {method === "apple" ? "שלם עם Apple Pay" : method === "card" ? "אשר והתחל טעינה" : "בחרו שיטת תשלום"}
