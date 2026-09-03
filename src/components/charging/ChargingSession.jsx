@@ -47,7 +47,7 @@ export default function ChargingSession({ station, onEnd }) {
   }, []);
 
   useEffect(() => {
-    if (phase !== "charging") return;
+    if (phase !== "charging" || !station) return;
     const id = setInterval(() => {
       setProgress((p) => {
         const next = Math.min(p + 2, 100);
@@ -55,7 +55,7 @@ export default function ChargingSession({ station, onEnd }) {
           notifiedRef.current = true;
           setNotified80(true);
           setShow80Popup(true);
-          fire80Notification(station.name);
+          fire80Notification(station?.name);
         }
         if (next >= 100) {
           clearInterval(id);
