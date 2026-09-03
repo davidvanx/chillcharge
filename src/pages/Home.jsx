@@ -137,8 +137,8 @@ function HomeInner() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-[26px] font-bold tracking-tight leading-tight bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Chillcharge</h1>
-                <p className="text-[12px] text-emerald-600 mt-0.5 flex items-center gap-1 font-medium">
-                  <LocateFixed className="w-3 h-3" /> Charging near you
+                <p className="text-[12px] text-emerald-600 mt-0.5 flex items-center gap-1 font-bold">
+                  <LocateFixed className="w-3 h-3" /> טעינה בקרבת מקום
                 </p>
               </div>
               <div className="flex items-center gap-2.5">
@@ -183,16 +183,16 @@ function HomeInner() {
                       if (liveMode) runLiveSearch(query);
                     }
                   }}
-                  placeholder={liveMode ? "Enter a city in Israel, e.g. Tel Aviv" : "Search stations or city"}
+                  placeholder={liveMode ? "הזן עיר בישראל, לדוגמה תל אביב" : "חפש עמדה או עיר"}
                   className="flex-1 bg-transparent outline-none text-[14px] placeholder:text-neutral-400"
                 />
                 {liveMode && (
                   <button
                     onClick={() => runLiveSearch(query)}
                     disabled={liveLoading}
-                    className="text-[13px] font-semibold text-emerald-600 disabled:opacity-50"
+                    className="text-[13px] font-bold text-emerald-600 disabled:opacity-50"
                   >
-                    {liveLoading ? "…" : "Find"}
+                    {liveLoading ? "…" : "חפש"}
                   </button>
                 )}
               </div>
@@ -214,9 +214,9 @@ function HomeInner() {
               </div>
             )}
             {liveMode && liveLocation && (
-              <p className="text-[11px] text-emerald-600 font-medium flex items-center gap-1">
+              <p className="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Live results near {liveLocation}, Israel
+                תוצאות חיות ליד {liveLocation}, ישראל
               </p>
             )}
           </div>
@@ -230,9 +230,9 @@ function HomeInner() {
 
               {/* Count summary */}
               <div className="px-5 pb-2 flex items-center gap-3 text-[11px] text-neutral-400">
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-violet-500" /> {dcCount} DC fast</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-violet-500" /> {dcCount} DC מהיר</span>
                 <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-sky-500" /> {acCount} AC</span>
-                <span className="ml-auto">{filtered.length} shown</span>
+                <span className="ml-auto font-medium">{filtered.length} תוצאות</span>
               </div>
             </>
           )}
@@ -251,7 +251,7 @@ function HomeInner() {
             ) : filtered.length === 0 ? (
               <div className="text-center py-16 text-neutral-400">
                 <SlidersHorizontal className="w-8 h-8 mx-auto mb-3 opacity-50" />
-                <p className="text-[14px]">No stations match your filters</p>
+                <p className="text-[14px]">אין עמדות שתואמות את הפילטרים</p>
               </div>
             ) : (
               filtered.map((s) => (
