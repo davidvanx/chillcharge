@@ -44,6 +44,8 @@ export default function ChargingSession({ station, onEnd }) {
     return () => clearInterval(id);
   }, [phase]);
 
+  if (!station) return null;
+
   const kwh = (progress / 100) * CAPACITY_KWH;
   const cost = kwh * station.price_per_kwh;
   const offset = C * (1 - progress / 100);
