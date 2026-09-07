@@ -101,7 +101,7 @@ export const translations = {
     "plug.desc": "חבר את הכבל לשקע הטעינה ברכבך, ולחץ על הכפתור כאשר הכבל מחובר היטב.",
     "plug.confirm": "הכבל מחובר",
     "plug.detected": "הכבל זוהה!",
-    "plug.starting": "מתחיל טעינה…",
+    "plug.starting": "בהכנה…",
     // Settings menu items
     "settings.menuTitle": "תפריט",
     "settings.settings": "הגדרות",
@@ -283,7 +283,7 @@ export const translations = {
     "plug.desc": "Plug the cable into your vehicle's charging port, and press the button when the cable is firmly connected.",
     "plug.confirm": "Cable connected",
     "plug.detected": "Cable detected!",
-    "plug.starting": "Starting charging…",
+    "plug.starting": "Preparing…",
     // Settings menu items
     "settings.menuTitle": "Menu",
     "settings.settings": "Settings",
@@ -465,7 +465,7 @@ export const translations = {
     "plug.desc": "صل الكابل بمنفذ الشحن في سيارتك، واضغط على الزر عند توصيل الكابل بشكل محكم.",
     "plug.confirm": "الكابل متصل",
     "plug.detected": "تم اكتشاف الكابل!",
-    "plug.starting": "جارٍ بدء الشحن…",
+    "plug.starting": "جارٍ التحضير…",
     // Settings menu items
     "settings.menuTitle": "القائمة",
     "settings.settings": "الإعدادات",
