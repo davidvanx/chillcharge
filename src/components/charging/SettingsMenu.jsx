@@ -4,21 +4,13 @@ import { useSettings } from "@/components/charging/SettingsProvider";
 import { getReceipts, clearReceipts } from "@/lib/receipts";
 import {
   X, Settings, User, Shield, Mail, ChevronLeft, Bell, Ruler, Coins,
-  MapPin, Check, Trash2, Send, Loader2, Car, Hash, Receipt, FileText, Languages, Phone,
+  MapPin, Check, Trash2, Loader2, Car, Hash, Receipt, FileText, Languages, Phone,
 } from "lucide-react";
 
-const items = [
-  { id: "settings", label: "הגדרות", icon: Settings, desc: "העדפות, יחידות, מטבע" },
-  { id: "personal", label: "פרטים אישיים", icon: User, desc: "שם, אימייל, פרטי רכב" },
-  { id: "receipts", label: "הקבלות שלי", icon: Receipt, desc: "היסטוריית טעינות ותשלומים" },
-  { id: "privacy", label: "פרטיות", icon: Shield, desc: "מיקום, היסטוריה, שיתוף" },
-  { id: "policy", label: "תצהיר פרטיות", icon: FileText, desc: "מדיניות הפרטיות המלאה" },
-  { id: "contact", label: "חברות טעינה", icon: Phone, desc: "מספרי שירות לקוחות" },
-];
-
 function Toggle({ icon: Icon, label, on, onChange }) {
+  const { dir } = useSettings();
   return (
-    <button onClick={onChange} className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-neutral-50 active:bg-neutral-100 transition text-right">
+    <button onClick={onChange} className="w-full flex items-center justify-between p-3.5 rounded-2xl bg-neutral-50 active:bg-neutral-100 transition" style={{ textAlign: dir === "ltr" ? "left" : "right" }} dir={dir}>
       <div className="flex items-center gap-3">
         <span className="w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-sm">
           <Icon className="w-4 h-4 text-neutral-600" />
@@ -33,8 +25,9 @@ function Toggle({ icon: Icon, label, on, onChange }) {
 }
 
 function Segmented({ value, onChange, options }) {
+  const { dir } = useSettings();
   return (
-    <div className="flex p-1 rounded-2xl bg-neutral-100">
+    <div className="flex p-1 rounded-2xl bg-neutral-100" dir={dir}>
       {options.map((o) => (
         <button
           key={o.value}
@@ -49,8 +42,9 @@ function Segmented({ value, onChange, options }) {
 }
 
 function Field({ icon: Icon, label, value, onChange, placeholder, type = "text" }) {
+  const { dir } = useSettings();
   return (
-    <div>
+    <div dir={dir}>
       <label className="text-[12px] font-medium text-neutral-500">{label}</label>
       <div className="mt-1 flex items-center gap-2 h-11 px-3 rounded-xl border border-neutral-200 bg-white focus-within:border-emerald-400">
         {Icon && <Icon className="w-4 h-4 text-neutral-400 shrink-0" />}
@@ -67,22 +61,22 @@ function Field({ icon: Icon, label, value, onChange, placeholder, type = "text" 
 }
 
 function SettingsScreen() {
-  const { settings, update } = useSettings();
+  const { settings, update, t, dir } = useSettings();
   return (
-    <div className="space-y-3">
-      <Toggle icon={Bell} label="התראות על עמדות" on={settings.notifications} onChange={() => update({ notifications: !settings.notifications })} />
+    <div className="space-y-3" dir={dir}>
+      <Toggle icon={Bell} label={t("settings.notifications")} on={settings.notifications} onChange={() => update({ notifications: !settings.notifications })} />
       <div className="p-3.5 rounded-2xl bg-neutral-50">
-        <div className="text-[13px] font-semibold text-neutral-800 mb-2">יחידות מרחק</div>
-        <Segmented value={settings.units} onChange={(v) => update({ units: v })} options={[{ value: "km", label: "ק״מ" }, { value: "mi", label: "מייל" }]} />
+        <div className="text-[13px] font-semibold text-neutral-800 mb-2">{t("settings.distanceUnits")}</div>
+        <Segmented value={settings.units} onChange={(v) => update({ units: v })} options={[{ value: "km", label: t("settings.km") }, { value: "mi", label: t("settings.mi") }]} />
       </div>
       <div className="p-3.5 rounded-2xl bg-neutral-50">
-        <div className="text-[13px] font-semibold text-neutral-800 mb-2">מטבע</div>
-        <Segmented value={settings.currency} onChange={(v) => update({ currency: v })} options={[{ value: "₪", label: "₪ ש״ח" }, { value: "€", label: "€ יורו" }, { value: "$", label: "$ דולר" }]} />
+        <div className="text-[13px] font-semibold text-neutral-800 mb-2">{t("settings.currency")}</div>
+        <Segmented value={settings.currency} onChange={(v) => update({ currency: v })} options={[{ value: "₪", label: t("settings.ils") }, { value: "€", label: t("settings.eur") }, { value: "$", label: t("settings.usd") }]} />
       </div>
       <div className="p-3.5 rounded-2xl bg-neutral-50">
         <div className="flex items-center gap-2 mb-2">
           <Languages className="w-4 h-4 text-neutral-500" />
-          <div className="text-[13px] font-semibold text-neutral-800">שפה</div>
+          <div className="text-[13px] font-semibold text-neutral-800">{t("settings.language")}</div>
         </div>
         <div className="grid grid-cols-2 gap-2">
           {[
@@ -101,13 +95,13 @@ function SettingsScreen() {
           ))}
         </div>
       </div>
-      <Field icon={MapPin} label="עיר ברירת מחדל לחיפוש" value={settings.defaultCity} onChange={(v) => update({ defaultCity: v })} placeholder="לדוגמה: תל אביב" />
+      <Field icon={MapPin} label={t("settings.defaultCity")} value={settings.defaultCity} onChange={(v) => update({ defaultCity: v })} placeholder={t("settings.defaultCityPlaceholder")} />
     </div>
   );
 }
 
 function PersonalScreen() {
-  const { profile, updateProfile } = useSettings();
+  const { profile, updateProfile, t, dir } = useSettings();
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -122,25 +116,25 @@ function PersonalScreen() {
   };
 
   return (
-    <div className="space-y-3">
-      <Field icon={User} label="שם מלא" value={profile.name} onChange={(v) => updateProfile({ name: v })} placeholder="ישראל ישראלי" />
-      <Field icon={Mail} label="אימייל" type="email" value={profile.email} onChange={(v) => updateProfile({ email: v })} placeholder="you@example.com" />
-      <Field icon={Car} label="דגם רכב" value={profile.car} onChange={(v) => updateProfile({ car: v })} placeholder="לדוגמה: Tesla Model 3" />
-      <Field icon={Hash} label="מספר לוחית" value={profile.plate} onChange={(v) => updateProfile({ plate: v })} placeholder="12-345-67" />
+    <div className="space-y-3" dir={dir}>
+      <Field icon={User} label={t("personal.fullName")} value={profile.name} onChange={(v) => updateProfile({ name: v })} placeholder={t("personal.fullNamePlaceholder")} />
+      <Field icon={Mail} label={t("personal.email")} type="email" value={profile.email} onChange={(v) => updateProfile({ email: v })} placeholder="you@example.com" />
+      <Field icon={Car} label={t("personal.carModel")} value={profile.car} onChange={(v) => updateProfile({ car: v })} placeholder={t("personal.carPlaceholder")} />
+      <Field icon={Hash} label={t("personal.plate")} value={profile.plate} onChange={(v) => updateProfile({ plate: v })} placeholder={t("personal.platePlaceholder")} />
       <button
         onClick={save}
         disabled={saving}
         className="w-full h-12 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-[14px] flex items-center justify-center gap-2 active:scale-95 transition shadow-lg shadow-emerald-500/30 disabled:opacity-60"
       >
         {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : saved ? <Check className="w-4 h-4" /> : null}
-        {saving ? "שומר…" : saved ? "נשמר!" : "שמור פרטים"}
+        {saving ? t("personal.saving") : saved ? t("personal.saved") : t("personal.save")}
       </button>
     </div>
   );
 }
 
 function PrivacyScreen() {
-  const { settings, update } = useSettings();
+  const { settings, update, t, dir } = useSettings();
   const [cleared, setCleared] = useState(false);
   const clearHistory = () => {
     try { localStorage.removeItem("chillcharge_history"); } catch {}
@@ -148,13 +142,13 @@ function PrivacyScreen() {
     setTimeout(() => setCleared(false), 1600);
   };
   return (
-    <div className="space-y-3">
-      <Toggle icon={MapPin} label="שיתוף מיקום" on={settings.shareLocation} onChange={() => update({ shareLocation: !settings.shareLocation })} />
-      <Toggle icon={Settings} label="שמירת היסטוריית טעינות" on={settings.saveHistory} onChange={() => update({ saveHistory: !settings.saveHistory })} />
-      <Toggle icon={Shield} label="שיתוף נתונים אנונימיים" on={settings.shareData} onChange={() => update({ shareData: !settings.shareData })} />
+    <div className="space-y-3" dir={dir}>
+      <Toggle icon={MapPin} label={t("privacy.shareLocation")} on={settings.shareLocation} onChange={() => update({ shareLocation: !settings.shareLocation })} />
+      <Toggle icon={Settings} label={t("privacy.saveHistory")} on={settings.saveHistory} onChange={() => update({ saveHistory: !settings.saveHistory })} />
+      <Toggle icon={Shield} label={t("privacy.shareData")} on={settings.shareData} onChange={() => update({ shareData: !settings.shareData })} />
       <button onClick={clearHistory} className="w-full h-12 rounded-2xl bg-red-50 text-red-600 font-semibold text-[14px] flex items-center justify-center gap-2 active:scale-95 transition">
         <Trash2 className="w-4 h-4" />
-        {cleared ? "היסטוריה נמחקה" : "מחק היסטוריה"}
+        {cleared ? t("privacy.historyDeleted") : t("privacy.deleteHistory")}
       </button>
     </div>
   );
@@ -176,11 +170,12 @@ const chargingCompanies = [
 ];
 
 function ContactScreen() {
+  const { t, dir } = useSettings();
   return (
-    <div className="space-y-2.5">
+    <div className="space-y-2.5" dir={dir}>
       <div className="rounded-2xl bg-emerald-50 p-3.5 mb-1">
-        <p className="text-[13px] font-semibold text-emerald-700">שירות לקוחות — חברות טעינה בישראל</p>
-        <p className="text-[12px] text-emerald-600 mt-0.5">לחץ על מספר לחיוג ישיר</p>
+        <p className="text-[13px] font-semibold text-emerald-700">{t("contact.header")}</p>
+        <p className="text-[12px] text-emerald-600 mt-0.5">{t("contact.desc")}</p>
       </div>
       {chargingCompanies.map((c, i) => (
         <a
@@ -211,13 +206,15 @@ function fmtDur(sec) {
 }
 
 function ReceiptsScreen() {
+  const { t, dir } = useSettings();
   const [receipts, setReceipts] = useState(() => getReceipts());
   const [cleared, setCleared] = useState(false);
 
   const fmtDate = (iso) => {
     try {
       const d = new Date(iso);
-      return d.toLocaleDateString("he-IL") + " " + d.toLocaleTimeString("he-IL", { hour: "2-digit", minute: "2-digit" });
+      const locale = dir === "ltr" ? "en-US" : "he-IL";
+      return d.toLocaleDateString(locale) + " " + d.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" });
     } catch {
       return "";
     }
@@ -225,16 +222,16 @@ function ReceiptsScreen() {
 
   if (receipts.length === 0) {
     return (
-      <div className="text-center py-16 text-neutral-400">
+      <div className="text-center py-16 text-neutral-400" dir={dir}>
         <Receipt className="w-8 h-8 mx-auto mb-3 opacity-40" />
-        <p className="text-[14px] font-medium">אין עדיין קבלות</p>
-        <p className="text-[12px] text-neutral-300 mt-1">הקבלות יופיעו כאן לאחר טעינות</p>
+        <p className="text-[14px] font-medium">{t("receipts.empty")}</p>
+        <p className="text-[12px] text-neutral-300 mt-1">{t("receipts.emptyDesc")}</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3" dir={dir}>
       {receipts.map((r) => (
         <div key={r.id} className="rounded-2xl bg-neutral-50 p-4">
           <div className="flex items-center justify-between">
@@ -258,30 +255,31 @@ function ReceiptsScreen() {
         className="w-full h-12 rounded-2xl bg-red-50 text-red-600 font-semibold text-[14px] flex items-center justify-center gap-2 active:scale-95 transition"
       >
         <Trash2 className="w-4 h-4" />
-        {cleared ? "נמחקו" : "מחק את כל הקבלות"}
+        {cleared ? t("receipts.deleted") : t("receipts.deleteAll")}
       </button>
     </div>
   );
 }
 
 function PolicyScreen() {
+  const { t, dir } = useSettings();
   const sections = [
-    { t: "1. מבוא", b: "תצהיר פרטיות זה מתאר כיצד אפליקציית Chillcharge (להלן \"האפליקציה\") אוספת, משתמשת, מאחסנת ומגנה על המידע האישי שלך. בשימוש באפליקציה הנך מאשר/ת את הוראות תצהיר זה." },
-    { t: "2. מידע שנאסף", b: "האפליקציה אוספת מידע שתמסר/י מרצונך (שם, אימייל, פרטי רכב), מידע על מיקומך על מנת להציג עמדות טעינה בקרבת מקום, ונתוני טעינה כגון כמות אנרגיה, עלות ומשך הטעינה לשם הפקת קבלות." },
-    { t: "3. שימוש במידע", b: "המידע משמש להצגת עמדות טעינה רלוונטיות, חישוב עלויות, הפקת קבלות, שמירת היסטוריית טעינות, שליחת התראות ושיפור חוויית השימוש. לא נשתמש במידע לשיווק ללא הסכמתך." },
-    { t: "4. שיתוף מידע", b: "איננו מוכרים את מידעך. מידע עשוי להימסר לצד שלישי רק כאשר הדבר נדרש על פי דין או לשם ביצוע עסקת תשלום מול ספקי התשלומים שבחרת." },
-    { t: "5. אבטחת מידע", b: "ננקוט אמצעים סבירים להגן על מידעך מפני גישה בלתי מורשית. עם זאת, אין להבטיח אבטחה מוחלטת של מערכות מידע." },
-    { t: "6. שמירת מידע ומחיקתו", b: "נתוני הטעינה והקבלות נשמרים במכשירך. באפשרותך למחוק את היסטוריית הטעינות והקבלות בכל עת דרך מסך הפרטיות או מסך הקבלות שבהגדרות." },
-    { t: "7. זכויותיך", b: "הנך זכאי/ת לעיין במידע שנשמר עליך, לבקש את מחיקתו, ולבטל הרשאות (כגון שיתוף מיקום) בכל עת דרך הגדרות האפליקציה או הגדרות המכשיר." },
-    { t: "8. ילדים", b: "האפליקציה אינה מיועדת לילדים מתחת לגיל 18, ואיננו אוספים ביודעין מידע מילדים." },
-    { t: "9. שינויים בתצהיר", b: "אנו רשאים לעדכן תצהיר זה מעת לעת. הגרסה העדכנית תפורסם באפליקציה." },
-    { t: "10. יצירת קשר", b: "לשאלות בנוגע לפרטיות ניתן לפנות דרך מסך \"יצירת קשר\" שבהגדרות." },
+    { t: t("policy.s1t"), b: t("policy.s1b") },
+    { t: t("policy.s2t"), b: t("policy.s2b") },
+    { t: t("policy.s3t"), b: t("policy.s3b") },
+    { t: t("policy.s4t"), b: t("policy.s4b") },
+    { t: t("policy.s5t"), b: t("policy.s5b") },
+    { t: t("policy.s6t"), b: t("policy.s6b") },
+    { t: t("policy.s7t"), b: t("policy.s7b") },
+    { t: t("policy.s8t"), b: t("policy.s8b") },
+    { t: t("policy.s9t"), b: t("policy.s9b") },
+    { t: t("policy.s10t"), b: t("policy.s10b") },
   ];
   return (
-    <div className="space-y-4 text-[13px] leading-relaxed text-neutral-600">
+    <div className="space-y-4 text-[13px] leading-relaxed text-neutral-600" dir={dir}>
       <div className="rounded-2xl bg-emerald-50 p-4">
-        <h3 className="text-[15px] font-bold text-emerald-700">תצהיר פרטיות</h3>
-        <p className="text-[12px] text-emerald-600 mt-1">עודכן לאחרונה: ספטמבר 2026</p>
+        <h3 className="text-[15px] font-bold text-emerald-700">{t("policy.title")}</h3>
+        <p className="text-[12px] text-emerald-600 mt-1">{t("policy.updated")}</p>
       </div>
       {sections.map((s) => (
         <div key={s.t}>
@@ -303,15 +301,26 @@ const screens = {
 };
 
 export default function SettingsMenu({ open, onClose }) {
+  const { t, dir } = useSettings();
   const [active, setActive] = useState(null);
   if (!open) return null;
+
+  const items = [
+    { id: "settings", label: t("settings.settings"), icon: Settings, desc: t("settings.settingsDesc") },
+    { id: "personal", label: t("settings.personal"), icon: User, desc: t("settings.personalDesc") },
+    { id: "receipts", label: t("settings.receipts"), icon: Receipt, desc: t("settings.receiptsDesc") },
+    { id: "privacy", label: t("settings.privacy"), icon: Shield, desc: t("settings.privacyDesc") },
+    { id: "policy", label: t("settings.policy"), icon: FileText, desc: t("settings.policyDesc") },
+    { id: "contact", label: t("settings.contact"), icon: Phone, desc: t("settings.contactDesc") },
+  ];
+
   const currentItem = items.find((i) => i.id === active);
   const Screen = active ? screens[active] : null;
 
   return (
-    <div className="absolute inset-0 z-50" dir="rtl">
+    <div className="absolute inset-0 z-50" dir={dir}>
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={onClose} />
-      <div className="absolute top-0 right-0 h-full w-[86%] max-w-[330px] bg-white shadow-2xl flex flex-col animate-in slide-in-from-right pt-[max(3.5rem,env(safe-area-inset-top))] pb-safe">
+      <div className={`absolute top-0 ${dir === "ltr" ? "left-0" : "right-0"} h-full w-[86%] max-w-[330px] bg-white shadow-2xl flex flex-col animate-in ${dir === "ltr" ? "slide-in-from-left" : "slide-in-from-right"} pt-[max(3.5rem,env(safe-area-inset-top))] pb-safe`}>
         <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
           <button
             onClick={active ? () => setActive(null) : onClose}
@@ -319,7 +328,7 @@ export default function SettingsMenu({ open, onClose }) {
           >
             <X className="w-4 h-4 text-neutral-600" />
           </button>
-          <h2 className="text-[16px] font-bold text-neutral-900">{currentItem ? currentItem.label : "תפריט"}</h2>
+          <h2 className="text-[16px] font-bold text-neutral-900">{currentItem ? currentItem.label : t("settings.menuTitle")}</h2>
           <div className="w-9" />
         </div>
 
@@ -331,7 +340,8 @@ export default function SettingsMenu({ open, onClose }) {
                 <button
                   key={it.id}
                   onClick={() => setActive(it.id)}
-                  className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-neutral-50 active:bg-neutral-100 transition text-right"
+                  className="w-full flex items-center gap-3 p-3.5 rounded-2xl bg-neutral-50 active:bg-neutral-100 transition"
+                  style={{ textAlign: dir === "ltr" ? "left" : "right" }}
                 >
                   <span className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0">
                     <Icon className="w-5 h-5 text-emerald-600" />
@@ -340,7 +350,7 @@ export default function SettingsMenu({ open, onClose }) {
                     <div className="text-[14px] font-semibold text-neutral-900">{it.label}</div>
                     <div className="text-[12px] text-neutral-400 truncate">{it.desc}</div>
                   </div>
-                  <ChevronLeft className="w-4 h-4 text-neutral-300" />
+                  <ChevronLeft className={`w-4 h-4 text-neutral-300 ${dir === "ltr" ? "rotate-180" : ""}`} />
                 </button>
               );
             })}
