@@ -1,9 +1,6 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState } from "react";
 import { useSettings } from "@/components/charging/SettingsProvider";
 import { Accessibility, X, Type, Contrast, Volume2, Gauge, Focus, Moon, Subtitles, Languages } from "lucide-react";
-
-const LS_POS = "chillcharge_a11y_pos_v2";
-const BTN = 52;
 
 function speak(text) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -32,60 +29,6 @@ function Toggle({ icon: Icon, label, on, onChange }) {
 export default function AccessibilityMenu() {
   const { settings, update } = useSettings();
   const [open, setOpen] = useState(false);
-  const btnRef = useRef(null);
-  const [pos, setPos] = useState(() => {
-    try {
-      const v = JSON.parse(localStorage.getItem(LS_POS));
-      if (v && typeof v.rx === "number" && typeof v.ry === "number") return v;
-    } catch {}
-    return { rx: 16, ry: 110 };
-  });
-  const drag = useRef({ active: false, moved: false, sx: 0, sy: 0, srx: 0, sry: 0 });
-
-  useEffect(() => {
-    localStorage.setItem(LS_POS, JSON.stringify(pos));
-  }, [pos]);
-
-  const clamp = (rx, ry) => {
-    const parent = btnRef.current?.offsetParent;
-    const cw = parent?.clientWidth ?? 360;
-    const ch = parent?.clientHeight ?? 700;
-    return {
-      rx: Math.max(8, Math.min(rx, cw - BTN - 8)),
-      ry: Math.max(8, Math.min(ry, ch - BTN - 8)),
-    };
-  };
-
-  // Re-clamp into view on mount and resize (fixes stale localStorage positions)
-  useEffect(() => {
-    const fix = () => setPos((p) => clamp(p.rx, p.ry));
-    const t = setTimeout(fix, 100);
-    window.addEventListener("resize", fix);
-    return () => {
-      clearTimeout(t);
-      window.removeEventListener("resize", fix);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const onDown = (e) => {
-    e.preventDefault();
-    drag.current = { active: true, moved: false, sx: e.clientX, sy: e.clientY, srx: pos.rx, sry: pos.ry };
-    try { btnRef.current?.setPointerCapture?.(e.pointerId); } catch {}
-  };
-  const onMove = (e) => {
-    if (!drag.current.active) return;
-    const dx = e.clientX - drag.current.sx;
-    const dy = e.clientY - drag.current.sy;
-    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) drag.current.moved = true;
-    setPos(clamp(drag.current.srx - dx, drag.current.sry - dy));
-  };
-  const onUp = (e) => {
-    if (!drag.current.active) return;
-    drag.current.active = false;
-    try { btnRef.current?.releasePointerCapture?.(e.pointerId); } catch {}
-    if (!drag.current.moved) setOpen((v) => !v);
-  };
 
   const options = [
     { key: "largeText", icon: Type, label: "טקסט מוגדל" },
@@ -107,26 +50,18 @@ export default function AccessibilityMenu() {
   return (
     <>
       <button
-        ref={btnRef}
-        onPointerDown={onDown}
-        onPointerMove={onMove}
-        onPointerUp={onUp}
-        style={{ right: pos.rx, bottom: pos.ry, touchAction: "none" }}
-        className="absolute z-[65] w-[52px] h-[52px] rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 text-white shadow-[0_6px_20px_rgba(16,185,129,0.45)] ring-4 ring-white/60 flex items-center justify-center active:scale-90 transition select-none cursor-grab"
-        aria-label="נגישות — גרר להזזה, לחץ לפתיחה"
+        onClick={() => setOpen((v) => !v)}
+        className="absolute top-[max(2.75rem,calc(env(safe-area-inset-top)+2rem))] left-3 z-40 w-8 h-8 rounded-full bg-black flex items-center justify-center active:scale-90 transition shadow-md"
+        aria-label="נגישות"
       >
-        <Accessibility className="w-6 h-6 pointer-events-none" />
-        {!open && (
-          <span className="absolute -top-1 -right-1 w-3 h-3 rounded-full bg-amber-400 ring-2 ring-white animate-pulse" />
-        )}
+        <Accessibility className="w-4 h-4 text-white" />
       </button>
 
       {open && (
         <>
           <div className="absolute inset-0 z-[64]" onClick={() => setOpen(false)} />
           <div
-            style={{ right: pos.rx, bottom: pos.ry + BTN + 10 }}
-            className="absolute z-[66] w-72 max-w-[85%] rounded-3xl bg-white/95 backdrop-blur-xl shadow-2xl border border-black/5 p-2.5 animate-in fade-in slide-in-from-bottom-2"
+            className="absolute top-[max(4.25rem,calc(env(safe-area-inset-top)+3.5rem))] left-3 z-[66] w-72 max-w-[85%] rounded-3xl bg-white/95 backdrop-blur-xl shadow-2xl border border-black/5 p-2.5 animate-in fade-in slide-in-from-top-2"
             dir="rtl"
           >
             <div className="flex items-center justify-between px-2 py-2 mb-1">
