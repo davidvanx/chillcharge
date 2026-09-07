@@ -51,7 +51,7 @@ export default function AccessibilityMenu() {
     <>
       <button
         onClick={() => setOpen((v) => !v)}
-        className="absolute top-[max(2.75rem,calc(env(safe-area-inset-top)+2rem))] left-3 z-40 w-8 h-8 rounded-full bg-black flex items-center justify-center active:scale-90 transition shadow-md"
+        className="absolute top-[max(0.5rem,env(safe-area-inset-top))] right-20 z-40 w-8 h-8 rounded-full bg-black flex items-center justify-center active:scale-90 transition shadow-md"
         aria-label="נגישות"
       >
         <Accessibility className="w-4 h-4 text-white" />
@@ -61,7 +61,7 @@ export default function AccessibilityMenu() {
         <>
           <div className="absolute inset-0 z-[64]" onClick={() => setOpen(false)} />
           <div
-            className="absolute top-[max(4.25rem,calc(env(safe-area-inset-top)+3.5rem))] left-3 z-[66] w-72 max-w-[85%] rounded-3xl bg-white/95 backdrop-blur-xl shadow-2xl border border-black/5 p-2.5 animate-in fade-in slide-in-from-top-2"
+            className="absolute top-[max(2.5rem,calc(env(safe-area-inset-top)+2rem))] right-3 z-[66] w-72 max-w-[85%] rounded-3xl bg-white/95 backdrop-blur-xl shadow-2xl border border-black/5 p-2.5 animate-in fade-in slide-in-from-top-2"
             dir="rtl"
           >
             <div className="flex items-center justify-between px-2 py-2 mb-1">
