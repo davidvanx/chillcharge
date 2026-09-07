@@ -89,7 +89,6 @@ function SettingsScreen() {
             { value: "he", label: "עברית" },
             { value: "en", label: "English" },
             { value: "ar", label: "العربية" },
-            { value: "ru", label: "Русский" },
           ].map((o) => (
             <button
               key={o.value}

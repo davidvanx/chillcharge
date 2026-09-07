@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSettings } from "@/components/charging/SettingsProvider";
-import { Accessibility, X, Type, Contrast, Volume2, Gauge, Focus, Moon, Subtitles, Languages } from "lucide-react";
+import { Accessibility, X, Type, Contrast, Volume2, Gauge, Focus, Moon, Subtitles } from "lucide-react";
 
 function speak(text) {
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
@@ -38,7 +38,6 @@ export default function AccessibilityMenu() {
     { key: "focus", icon: Focus, label: "מסגרת ממוקדת" },
     { key: "dark", icon: Moon, label: "מצב כהה" },
     { key: "subtitles", icon: Subtitles, label: "כתוביות ותיאורים" },
-    { key: "translate", icon: Languages, label: "תרגום שפה" },
   ];
 
   const toggle = (key) => {
