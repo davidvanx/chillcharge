@@ -306,7 +306,7 @@ function HomeInner() {
       <SettingsMenu open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       <PaymentSheet station={payStation} onClose={() => setPayStation(null)} onConfirm={(s) => setPlugStation(s)} />
       <PlugInPrompt station={plugStation} onClose={() => setPlugStation(null)} onConfirmed={(s) => setSessionStation(s)} />
-      <ChargingSession station={sessionStation} onEnd={() => setSessionStation(null)} />
+      <ChargingSession station={sessionStation} onEnd={() => { setSessionStation(null); setPlugStation(null); }} />
       <FiltersSheet
         open={filtersOpen}
         onClose={() => setFiltersOpen(false)}
