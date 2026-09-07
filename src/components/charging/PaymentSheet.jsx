@@ -1,9 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { X, Apple, CreditCard, Plus, Check, Zap, Lock } from "lucide-react";
 
 export default function PaymentSheet({ station, onClose, onConfirm }) {
   const [method, setMethod] = useState(null);
   const [done, setDone] = useState(false);
+
+  useEffect(() => {
+    if (station) {
+      setDone(false);
+      setMethod(null);
+    }
+  }, [station]);
+
   if (!station) return null;
 
   const confirm = () => {

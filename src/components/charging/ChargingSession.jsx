@@ -47,6 +47,19 @@ export default function ChargingSession({ station, onEnd }) {
   }, []);
 
   useEffect(() => {
+    if (station) {
+      setProgress(0);
+      setElapsed(0);
+      setPhase("charging");
+      setNotified80(false);
+      setShow80Popup(false);
+      setRating(0);
+      setHover(0);
+      notifiedRef.current = false;
+    }
+  }, [station]);
+
+  useEffect(() => {
     if (phase !== "charging" || !station) return;
     const id = setInterval(() => {
       setProgress((p) => {
@@ -66,7 +79,7 @@ export default function ChargingSession({ station, onEnd }) {
       setElapsed((e) => e + 0.25);
     }, 250);
     return () => clearInterval(id);
-  }, [phase]);
+  }, [phase, station]);
 
   useEffect(() => {
     if (phase === "done" && station) {
