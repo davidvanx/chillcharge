@@ -312,7 +312,7 @@ export default function SettingsMenu({ open, onClose }) {
   return (
     <div className="absolute inset-0 z-50" dir="rtl">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={onClose} />
-      <div className="absolute top-0 right-0 h-full w-[86%] max-w-[330px] bg-white shadow-2xl flex flex-col animate-in slide-in-from-right pt-safe pb-safe">
+      <div className="absolute top-0 right-0 h-full w-[86%] max-w-[330px] bg-white shadow-2xl flex flex-col animate-in slide-in-from-right pt-[max(3.5rem,env(safe-area-inset-top))] pb-safe">
         <div className="flex items-center justify-between px-5 py-4 border-b border-neutral-100">
           <button
             onClick={active ? () => setActive(null) : onClose}

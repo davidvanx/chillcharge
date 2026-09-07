@@ -42,7 +42,7 @@ export default function FiltersSheet({ open, onClose, value, onChange, networks 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center">
+    <div className="absolute inset-0 z-50 flex items-end justify-center">
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
       <div
         className="relative w-full max-w-md bg-white rounded-t-[2rem] shadow-2xl max-h-[85vh] overflow-y-auto animate-in slide-in-from-bottom no-scrollbar pb-safe"
