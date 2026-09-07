@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { X, Zap, MapPin, Star, CheckCircle2, Clock, Navigation, Wifi, Coffee, ShoppingBag, Plug, Bookmark } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSettings } from "@/components/charging/SettingsProvider";
+import NavMenu from "@/components/charging/NavMenu";
 
 const amenityMeta = {
   wifi: { icon: Wifi, label: "Wi-Fi" },
@@ -11,6 +12,7 @@ const amenityMeta = {
 
 export default function StationDetailSheet({ station, onClose, onStartCharging }) {
   const { settings } = useSettings();
+  const [showNav, setShowNav] = useState(false);
 
   useEffect(() => {
     if (settings.voice && station && "speechSynthesis" in window) {
@@ -132,13 +134,14 @@ export default function StationDetailSheet({ station, onClose, onStartCharging }
               <Bookmark className="w-4 h-4" />
               שמור
             </button>
-            <button className="flex-1 h-12 rounded-2xl bg-neutral-900 font-semibold text-[14px] text-white flex items-center justify-center gap-1.5 active:scale-95 transition">
+            <button onClick={() => setShowNav(true)} className="flex-1 h-12 rounded-2xl bg-neutral-900 font-semibold text-[14px] text-white flex items-center justify-center gap-1.5 active:scale-95 transition">
               <Navigation className="w-4 h-4" />
               נווט
             </button>
           </div>
         </div>
       </div>
+      {showNav && <NavMenu station={station} onClose={() => setShowNav(false)} />}
     </div>
   );
 }
