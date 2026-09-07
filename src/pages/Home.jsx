@@ -122,6 +122,8 @@ function HomeInner() {
   if (filters.length) a11yStyle.filter = filters.join(" ");
   if (settings.largeText) a11yStyle.zoom = 1.08;
 
+  const overlayOpen = !!(selected || settingsOpen || payStation || plugStation || sessionStation || filtersOpen) && !a11yOpen;
+
   return (
     <div className="relative h-full font-body text-neutral-900">
       <div dir={dir} className={`mx-auto max-w-md h-full bg-gradient-to-b from-emerald-50/60 to-neutral-50 relative flex flex-col ${a11yClass}`} style={a11yStyle}>
@@ -323,6 +325,15 @@ function HomeInner() {
         }}
         networks={networks}
       />
+      {overlayOpen && (
+        <button
+          onClick={() => setA11yOpen(true)}
+          className="absolute bottom-20 right-3 z-[60] w-12 h-12 rounded-full bg-emerald-500 text-white shadow-xl flex items-center justify-center active:scale-90 transition"
+          aria-label={t("home.accessibility")}
+        >
+          <Accessibility className="w-5 h-5" />
+        </button>
+      )}
       <AccessibilityMenu open={a11yOpen} onClose={() => setA11yOpen(false)} />
     </div>
   );
