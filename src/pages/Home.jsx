@@ -12,6 +12,7 @@ import ChargingSession from "@/components/charging/ChargingSession";
 import AccessibilityMenu from "@/components/charging/AccessibilityMenu";
 import MapView from "@/components/charging/MapView";
 import FiltersSheet from "@/components/charging/FiltersSheet";
+import SplashScreen from "@/components/charging/SplashScreen";
 import { SettingsProvider, useSettings } from "@/components/charging/SettingsProvider";
 import { cn } from "@/lib/utils";
 import { searchStationsNear } from "@/lib/chargingSearch";
@@ -320,10 +321,12 @@ function HomeInner() {
 }
 
 export default function Home() {
+  const [splashDone, setSplashDone] = useState(false);
   return (
     <IPhoneFrame>
       <SettingsProvider>
         <HomeInner />
+        {!splashDone && <SplashScreen onFinish={() => setSplashDone(true)} />}
       </SettingsProvider>
     </IPhoneFrame>
   );
