@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
-import { Zap, Search, LocateFixed, SlidersHorizontal, Menu, Map as MapIcon } from "lucide-react";
+import { Zap, Search, LocateFixed, SlidersHorizontal, Menu, Map as MapIcon, Accessibility } from "lucide-react";
 import StationCard from "@/components/charging/StationCard";
 import FilterTabs from "@/components/charging/FilterTabs";
 import SortMenu from "@/components/charging/SortMenu";
@@ -33,6 +33,7 @@ function HomeInner() {
   const [sessionStation, setSessionStation] = useState(null);
   const [view, setView] = useState("list");
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [a11yOpen, setA11yOpen] = useState(false);
   const [advFilters, setAdvFilters] = useState({
     onlyAvailable: false,
     minPower: 0,
@@ -284,6 +285,10 @@ function HomeInner() {
               <SlidersHorizontal className="w-5 h-5" />
               <span className="text-[10px] font-semibold">פילטרים</span>
             </button>
+            <button onClick={() => setA11yOpen(true)} className={cn("flex flex-col items-center gap-0.5 transition", a11yOpen ? "text-emerald-600" : "text-neutral-400")}>
+              <Accessibility className="w-5 h-5" />
+              <span className="text-[10px] font-semibold">נגישות</span>
+            </button>
           </div>
         </div>
       </div>
@@ -315,7 +320,7 @@ function HomeInner() {
         }}
         networks={networks}
       />
-      <AccessibilityMenu />
+      <AccessibilityMenu open={a11yOpen} onClose={() => setA11yOpen(false)} />
     </div>
   );
 }

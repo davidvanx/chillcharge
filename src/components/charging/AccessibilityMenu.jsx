@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useSettings } from "@/components/charging/SettingsProvider";
 import { Accessibility, X, Type, Contrast, Volume2, Gauge, Focus, Moon, Subtitles } from "lucide-react";
 
@@ -26,9 +26,8 @@ function Toggle({ icon: Icon, label, on, onChange }) {
   );
 }
 
-export default function AccessibilityMenu() {
+export default function AccessibilityMenu({ open, onClose }) {
   const { settings, update } = useSettings();
-  const [open, setOpen] = useState(false);
 
   const options = [
     { key: "largeText", icon: Type, label: "טקסט מוגדל" },
@@ -46,42 +45,32 @@ export default function AccessibilityMenu() {
     if (key === "voice") speak(next ? "הקראה בקול הופעלה" : "הקראה בקול בוטלה");
   };
 
+  if (!open) return null;
+
   return (
     <>
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="absolute top-[max(0.5rem,env(safe-area-inset-top))] right-20 z-40 w-8 h-8 rounded-full bg-black flex items-center justify-center active:scale-90 transition shadow-md"
-        aria-label="נגישות"
+      <div className="absolute inset-0 z-[64]" onClick={onClose} />
+      <div
+        className="absolute bottom-[max(5.5rem,calc(env(safe-area-inset-bottom)+4.5rem))] right-3 z-[66] w-72 max-w-[85%] rounded-3xl bg-white/95 backdrop-blur-xl shadow-2xl border border-black/5 p-2.5 animate-in fade-in slide-in-from-bottom-2"
+        dir="rtl"
       >
-        <Accessibility className="w-4 h-4 text-white" />
-      </button>
-
-      {open && (
-        <>
-          <div className="absolute inset-0 z-[64]" onClick={() => setOpen(false)} />
-          <div
-            className="absolute top-[max(2.5rem,calc(env(safe-area-inset-top)+2rem))] right-3 z-[66] w-72 max-w-[85%] rounded-3xl bg-white/95 backdrop-blur-xl shadow-2xl border border-black/5 p-2.5 animate-in fade-in slide-in-from-top-2"
-            dir="rtl"
-          >
-            <div className="flex items-center justify-between px-2 py-2 mb-1">
-              <span className="text-[15px] font-bold text-neutral-900 flex items-center gap-2">
-                <span className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
-                  <Accessibility className="w-4 h-4 text-emerald-600" />
-                </span>
-                נגישות
-              </span>
-              <button onClick={() => setOpen(false)} className="w-7 h-7 rounded-full bg-neutral-100 flex items-center justify-center active:scale-90 transition">
-                <X className="w-3.5 h-3.5 text-neutral-500" />
-              </button>
-            </div>
-            <div className="max-h-[55vh] overflow-y-auto no-scrollbar">
-              {options.map((o) => (
-                <Toggle key={o.key} icon={o.icon} label={o.label} on={settings[o.key]} onChange={() => toggle(o.key)} />
-              ))}
-            </div>
-          </div>
-        </>
-      )}
+        <div className="flex items-center justify-between px-2 py-2 mb-1">
+          <span className="text-[15px] font-bold text-neutral-900 flex items-center gap-2">
+            <span className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
+              <Accessibility className="w-4 h-4 text-emerald-600" />
+            </span>
+            נגישות
+          </span>
+          <button onClick={onClose} className="w-7 h-7 rounded-full bg-neutral-100 flex items-center justify-center active:scale-90 transition">
+            <X className="w-3.5 h-3.5 text-neutral-500" />
+          </button>
+        </div>
+        <div className="max-h-[55vh] overflow-y-auto no-scrollbar">
+          {options.map((o) => (
+            <Toggle key={o.key} icon={o.icon} label={o.label} on={settings[o.key]} onChange={() => toggle(o.key)} />
+          ))}
+        </div>
+      </div>
     </>
   );
 }
