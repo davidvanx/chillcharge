@@ -1,19 +1,21 @@
 import React, { useState } from "react";
 import { ChevronDown, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useSettings } from "@/components/charging/SettingsProvider";
 
 export default function SortMenu({ value, onChange }) {
+  const { t, dir } = useSettings();
   const [open, setOpen] = useState(false);
   const options = [
-    { id: "value", label: "הכי משתלם" },
-    { id: "distance", label: "הכי קרוב" },
-    { id: "power", label: "הכי מהיר" },
-    { id: "rating", label: "הכי מדורג" },
+    { id: "value", label: t("sort.value") },
+    { id: "distance", label: t("sort.distance") },
+    { id: "power", label: t("sort.power") },
+    { id: "rating", label: t("sort.rating") },
   ];
   const current = options.find((o) => o.id === value);
 
   return (
-    <div className="relative" dir="rtl">
+    <div className="relative" dir={dir}>
       <button
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white border border-black/5 shadow-sm text-[13px] font-bold text-neutral-700 active:scale-95 transition"

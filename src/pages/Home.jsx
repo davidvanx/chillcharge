@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 import { searchStationsNear } from "@/lib/chargingSearch";
 
 function HomeInner() {
-  const { settings } = useSettings();
+  const { settings, t, dir } = useSettings();
   const [stations, setStations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
@@ -122,7 +122,7 @@ function HomeInner() {
 
   return (
     <div className="relative h-full font-body text-neutral-900">
-      <div className={`mx-auto max-w-md h-full bg-gradient-to-b from-emerald-50/60 to-neutral-50 relative flex flex-col ${a11yClass}`} style={a11yStyle}>
+      <div dir={dir} className={`mx-auto max-w-md h-full bg-gradient-to-b from-emerald-50/60 to-neutral-50 relative flex flex-col ${a11yClass}`} style={a11yStyle}>
         {/* Status bar */}
         <div className="sticky top-0 z-30 bg-emerald-50/70 backdrop-blur-xl">
           <div className="flex items-center justify-between px-6 pt-[max(0.75rem,env(safe-area-inset-top))] pb-1 text-[12px] font-semibold text-neutral-900">
@@ -140,14 +140,14 @@ function HomeInner() {
               <div>
                 <h1 className="text-[26px] font-bold tracking-tight leading-tight bg-gradient-to-r from-emerald-600 to-teal-500 bg-clip-text text-transparent">Chillcharge</h1>
                 <p className="text-[12px] text-emerald-600 mt-0.5 flex items-center gap-1 font-bold">
-                  <LocateFixed className="w-3 h-3" /> טעינה בקרבת מקום
+                  <LocateFixed className="w-3 h-3" /> {t("home.tagline")}
                 </p>
               </div>
               <div className="flex items-center gap-2.5">
                 <button
                   onClick={() => setSettingsOpen(true)}
                   className="w-10 h-10 rounded-2xl bg-white border border-black/5 shadow-sm flex items-center justify-center active:scale-90 transition"
-                  aria-label="תפריט"
+                  aria-label={t("settings.menuTitle")}
                 >
                   <Menu className="w-5 h-5 text-neutral-700" />
                 </button>
@@ -185,7 +185,7 @@ function HomeInner() {
                       if (liveMode) runLiveSearch(query);
                     }
                   }}
-                  placeholder={liveMode ? "הזן עיר בישראל, לדוגמה תל אביב" : "חפש עמדה או עיר"}
+                  placeholder={liveMode ? t("home.livePlaceholder") : t("home.searchPlaceholder")}
                   className="flex-1 bg-transparent outline-none text-[14px] placeholder:text-neutral-400"
                 />
                 {liveMode && (
@@ -194,7 +194,7 @@ function HomeInner() {
                     disabled={liveLoading}
                     className="text-[13px] font-bold text-emerald-600 disabled:opacity-50"
                   >
-                    {liveLoading ? "…" : "חפש"}
+                    {liveLoading ? "…" : t("home.search")}
                   </button>
                 )}
               </div>
@@ -218,7 +218,7 @@ function HomeInner() {
             {liveMode && liveLocation && (
               <p className="text-[11px] text-emerald-600 font-bold flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                תוצאות חיות ליד {liveLocation}, ישראל
+                {t("home.liveResults", { loc: liveLocation })}
               </p>
             )}
           </div>
@@ -232,9 +232,9 @@ function HomeInner() {
 
               {/* Count summary */}
               <div className="px-5 pb-2 flex items-center gap-3 text-[11px] text-neutral-400">
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-violet-500" /> {dcCount} DC מהיר</span>
-                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-sky-500" /> {acCount} AC</span>
-                <span className="ml-auto font-medium">{filtered.length} תוצאות</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-violet-500" /> {dcCount} {t("home.dcFast")}</span>
+                <span className="flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-sky-500" /> {acCount} {t("home.ac")}</span>
+                <span className="ml-auto font-medium">{filtered.length} {t("home.results")}</span>
               </div>
             </>
           )}
@@ -253,7 +253,7 @@ function HomeInner() {
             ) : filtered.length === 0 ? (
               <div className="text-center py-16 text-neutral-400">
                 <SlidersHorizontal className="w-8 h-8 mx-auto mb-3 opacity-50" />
-                <p className="text-[14px]">אין עמדות שתואמות את הפילטרים</p>
+                <p className="text-[14px]">{t("home.empty")}</p>
               </div>
             ) : (
               filtered.map((s) => (
@@ -275,19 +275,19 @@ function HomeInner() {
           <div className="relative z-30 rounded-3xl bg-white/90 backdrop-blur-xl border border-black/5 shadow-[0_-2px_20px_rgba(0,0,0,0.08)] flex items-center justify-around py-2.5">
             <button onClick={() => setView("list")} className={cn("flex flex-col items-center gap-0.5 transition", view === "list" ? "text-emerald-600" : "text-neutral-400")}>
               <Zap className={cn("w-5 h-5", view === "list" && "fill-emerald-500 text-emerald-500")} />
-              <span className="text-[10px] font-semibold">עמדות</span>
+              <span className="text-[10px] font-semibold">{t("home.stations")}</span>
             </button>
             <button onClick={() => setView("map")} className={cn("flex flex-col items-center gap-0.5 transition", view === "map" ? "text-emerald-600" : "text-neutral-400")}>
               <MapIcon className="w-5 h-5" />
-              <span className="text-[10px] font-semibold">מפה</span>
+              <span className="text-[10px] font-semibold">{t("home.map")}</span>
             </button>
             <button onClick={() => setFiltersOpen(true)} className={cn("flex flex-col items-center gap-0.5 transition", filtersOpen ? "text-emerald-600" : "text-neutral-400")}>
               <SlidersHorizontal className="w-5 h-5" />
-              <span className="text-[10px] font-semibold">פילטרים</span>
+              <span className="text-[10px] font-semibold">{t("home.filters")}</span>
             </button>
             <button onClick={() => setA11yOpen(true)} className={cn("flex flex-col items-center gap-0.5 transition", a11yOpen ? "text-emerald-600" : "text-neutral-400")}>
               <Accessibility className="w-5 h-5" />
-              <span className="text-[10px] font-semibold">נגישות</span>
+              <span className="text-[10px] font-semibold">{t("home.accessibility")}</span>
             </button>
           </div>
         </div>

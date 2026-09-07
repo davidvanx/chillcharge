@@ -4,20 +4,6 @@ import { Zap, BatteryCharging, Check, Star, X, Phone, Bell } from "lucide-react"
 import { useSettings } from "@/components/charging/SettingsProvider";
 import { addReceipt } from "@/lib/receipts";
 
-function fire80Notification(stationName) {
-  try {
-    if ("vibrate" in navigator) navigator.vibrate([120, 60, 120]);
-  } catch {}
-  try {
-    if ("Notification" in window && Notification.permission === "granted") {
-      new Notification("הרכב הגיע ל-80% 🔋", {
-        body: `ניתן לסיים את הטעינה בעמדה ${stationName ?? ""}. ההמתנה הנוספת תאט משמעותית.`,
-        tag: "chillcharge-80",
-      });
-    }
-  } catch {}
-}
-
 const CAPACITY_KWH = 60;
 const R = 78;
 const C = 2 * Math.PI * R;
@@ -29,8 +15,8 @@ function fmtTime(s) {
 }
 
 export default function ChargingSession({ station, onEnd }) {
-  const { settings } = useSettings();
-  const currency = settings.currency || station.currency || "₪";
+  const { settings, t, dir } = useSettings();
+  const currency = settings.currency || station?.currency || "₪";
   const [progress, setProgress] = useState(0);
   const [elapsed, setElapsed] = useState(0);
   const [notified80, setNotified80] = useState(false);
@@ -68,7 +54,17 @@ export default function ChargingSession({ station, onEnd }) {
           notifiedRef.current = true;
           setNotified80(true);
           setShow80Popup(true);
-          fire80Notification(station?.name);
+          try {
+            if ("vibrate" in navigator) navigator.vibrate([120, 60, 120]);
+          } catch {}
+          try {
+            if ("Notification" in window && Notification.permission === "granted") {
+              new Notification(t("session.reached80Popup"), {
+                body: t("session.reached80Body"),
+                tag: "chillcharge-80",
+              });
+            }
+          } catch {}
         }
         if (next >= 100) {
           clearInterval(id);
@@ -79,7 +75,7 @@ export default function ChargingSession({ station, onEnd }) {
       setElapsed((e) => e + 0.25);
     }, 250);
     return () => clearInterval(id);
-  }, [phase, station]);
+  }, [phase, station, t]);
 
   useEffect(() => {
     if (phase === "done" && station) {
@@ -110,7 +106,7 @@ export default function ChargingSession({ station, onEnd }) {
     return (
       <motion.div
         className="absolute inset-0 z-[70] bg-gradient-to-b from-emerald-500 to-teal-600 flex flex-col items-center justify-center px-6 text-white text-center"
-        dir="rtl"
+        dir={dir}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       >
@@ -126,10 +122,10 @@ export default function ChargingSession({ station, onEnd }) {
         </motion.div>
 
         <motion.h2 initial={{ y: 16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="text-[28px] font-bold">
-          תודה שהטענת איתנו!
+          {t("session.thanks")}
         </motion.h2>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-[14px] text-white/80 mt-2">
-          הטעינה הושלמה בהצלחה
+          {t("session.complete")}
         </motion.p>
 
         <motion.div
@@ -139,24 +135,24 @@ export default function ChargingSession({ station, onEnd }) {
           className="mt-7 w-full max-w-[280px] rounded-3xl bg-white/15 backdrop-blur p-5 grid grid-cols-3 gap-2 text-center"
         >
           <div>
-            <div className="text-[11px] text-white/70">טעינה</div>
+            <div className="text-[11px] text-white/70">{t("session.charging")}</div>
             <div className="text-[16px] font-bold mt-0.5">{kwh.toFixed(1)}</div>
             <div className="text-[10px] text-white/70">kWh</div>
           </div>
           <div>
-            <div className="text-[11px] text-white/70">עלות</div>
+            <div className="text-[11px] text-white/70">{t("session.cost")}</div>
             <div className="text-[16px] font-bold mt-0.5">{cost.toFixed(2)}</div>
             <div className="text-[10px] text-white/70">{currency}</div>
           </div>
           <div>
-            <div className="text-[11px] text-white/70">משך</div>
+            <div className="text-[11px] text-white/70">{t("session.duration")}</div>
             <div className="text-[16px] font-bold mt-0.5">{fmtTime(elapsed)}</div>
-            <div className="text-[10px] text-white/70">דקות</div>
+            <div className="text-[10px] text-white/70">{t("session.minutes")}</div>
           </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="mt-8">
-          <p className="text-[14px] font-semibold mb-3">איך הייתה החוויה?</p>
+          <p className="text-[14px] font-semibold mb-3">{t("session.howWasIt")}</p>
           <div className="flex gap-2 justify-center">
             {[1, 2, 3, 4, 5].map((n) => (
               <button
@@ -179,18 +175,18 @@ export default function ChargingSession({ station, onEnd }) {
           onClick={onEnd}
           className="mt-8 w-full max-w-[280px] py-3.5 rounded-2xl bg-white text-emerald-600 font-bold text-[15px] active:scale-95 transition shadow-lg"
         >
-          {rating > 0 ? "סיום" : "דלג"}
+          {rating > 0 ? t("session.finish") : t("session.skip")}
         </motion.button>
       </motion.div>
     );
   }
 
   return (
-    <div className="absolute inset-0 z-[70] bg-gradient-to-b from-neutral-900 to-neutral-800 flex flex-col text-white" dir="rtl">
+    <div className="absolute inset-0 z-[70] bg-gradient-to-b from-neutral-900 to-neutral-800 flex flex-col text-white" dir={dir}>
       <div className="flex items-center justify-between px-5 pt-5">
         <div>
           <div className="text-[12px] text-emerald-400 font-semibold flex items-center gap-1.5">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> טוען כעת
+            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" /> {t("session.chargingNow")}
           </div>
           <h2 className="text-[18px] font-bold mt-0.5">{station.name}</h2>
         </div>
@@ -209,8 +205,8 @@ export default function ChargingSession({ station, onEnd }) {
           >
             <BatteryCharging className="w-5 h-5 text-emerald-400 shrink-0" />
             <div className="text-right">
-              <div className="text-[13px] font-bold">הרכב הגיע ל-80%</div>
-              <div className="text-[11px] text-white/70">מומלץ לסיים את הטעינה בקרוב</div>
+              <div className="text-[13px] font-bold">{t("session.reached80")}</div>
+              <div className="text-[11px] text-white/70">{t("session.reached80Desc")}</div>
             </div>
           </motion.div>
         )}
@@ -223,7 +219,7 @@ export default function ChargingSession({ station, onEnd }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="absolute inset-0 z-[80] bg-black/60 backdrop-blur-sm flex items-center justify-center px-6"
-            dir="rtl"
+            dir={dir}
           >
             <motion.div
               initial={{ scale: 0.8, y: 20 }}
@@ -235,16 +231,16 @@ export default function ChargingSession({ station, onEnd }) {
               <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
                 <Bell className="w-8 h-8 text-emerald-600" />
               </div>
-              <h3 className="text-[18px] font-bold">הרכב הגיע ל-80% 🔋</h3>
+              <h3 className="text-[18px] font-bold">{t("session.reached80Popup")}</h3>
               <p className="text-[13px] text-neutral-500 mt-2 leading-relaxed">
-                מומלץ לסיים את הטעינה כעת. מעבר ל-80% הטעינה מאטה משמעותית, וההמתנה הנוספת כנראה לא כדאית.
+                {t("session.reached80Body")}
               </p>
               <div className="mt-5 flex gap-2">
                 <button
                   onClick={() => setShow80Popup(false)}
                   className="flex-1 py-3 rounded-2xl bg-neutral-100 text-neutral-700 font-semibold text-[14px] active:scale-95 transition"
                 >
-                  המשך לטעון
+                  {t("session.keepCharging")}
                 </button>
                 <button
                   onClick={() => {
@@ -253,7 +249,7 @@ export default function ChargingSession({ station, onEnd }) {
                   }}
                   className="flex-1 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-[14px] active:scale-95 transition shadow-lg shadow-emerald-500/30"
                 >
-                  סיים טעינה
+                  {t("session.finishCharging")}
                 </button>
               </div>
             </motion.div>
@@ -296,19 +292,19 @@ export default function ChargingSession({ station, onEnd }) {
 
         <div className="mt-8 w-full max-w-[300px] grid grid-cols-3 gap-3 px-5">
           <div className="rounded-2xl bg-white/5 p-3 text-center">
-            <div className="text-[10px] text-white/50">נטען</div>
+            <div className="text-[10px] text-white/50">{t("session.charged")}</div>
             <div className="text-[16px] font-bold mt-0.5">{kwh.toFixed(1)}</div>
             <div className="text-[10px] text-white/50">kWh</div>
           </div>
           <div className="rounded-2xl bg-white/5 p-3 text-center">
-            <div className="text-[10px] text-white/50">עלות</div>
+            <div className="text-[10px] text-white/50">{t("session.cost")}</div>
             <div className="text-[16px] font-bold mt-0.5">{cost.toFixed(2)}</div>
             <div className="text-[10px] text-white/50">{currency}</div>
           </div>
           <div className="rounded-2xl bg-white/5 p-3 text-center">
-            <div className="text-[10px] text-white/50">זמן</div>
+            <div className="text-[10px] text-white/50">{t("session.time")}</div>
             <div className="text-[16px] font-bold mt-0.5">{fmtTime(elapsed)}</div>
-            <div className="text-[10px] text-white/50">דקות</div>
+            <div className="text-[10px] text-white/50">{t("session.minutes")}</div>
           </div>
         </div>
       </div>
@@ -322,13 +318,13 @@ export default function ChargingSession({ station, onEnd }) {
             <Phone className="w-4 h-4 text-emerald-400" />
           </span>
           <div className="flex-1 text-right">
-            <div className="text-[13px] font-semibold text-white">תמיכה וסיוע</div>
-            <div className="text-[11px] text-white/60">ליצירת קשר עם התמיכה חייגו</div>
+            <div className="text-[13px] font-semibold text-white">{t("session.support")}</div>
+            <div className="text-[11px] text-white/60">{t("session.supportDesc")}</div>
           </div>
           <span className="text-[16px] font-bold text-emerald-400 tracking-wide" dir="ltr">*2422</span>
         </a>
         <button onClick={stop} className="w-full py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white font-semibold text-[15px] active:scale-95 transition">
-          עצור טעינה
+          {t("session.stopCharging")}
         </button>
       </div>
     </div>

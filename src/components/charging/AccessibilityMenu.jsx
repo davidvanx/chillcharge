@@ -27,22 +27,22 @@ function Toggle({ icon: Icon, label, on, onChange }) {
 }
 
 export default function AccessibilityMenu({ open, onClose }) {
-  const { settings, update } = useSettings();
+  const { settings, update, t, dir } = useSettings();
 
   const options = [
-    { key: "largeText", icon: Type, label: "טקסט מוגדל" },
-    { key: "contrast", icon: Contrast, label: "ניגודיות גבוהה" },
-    { key: "voice", icon: Volume2, label: "הקראה בקול" },
-    { key: "motion", icon: Gauge, label: "האטת אנימציות" },
-    { key: "focus", icon: Focus, label: "מסגרת ממוקדת" },
-    { key: "dark", icon: Moon, label: "מצב כהה" },
-    { key: "subtitles", icon: Subtitles, label: "כתוביות ותיאורים" },
+    { key: "largeText", icon: Type, label: t("a11y.largeText") },
+    { key: "contrast", icon: Contrast, label: t("a11y.contrast") },
+    { key: "voice", icon: Volume2, label: t("a11y.voice") },
+    { key: "motion", icon: Gauge, label: t("a11y.motion") },
+    { key: "focus", icon: Focus, label: t("a11y.focus") },
+    { key: "dark", icon: Moon, label: t("a11y.dark") },
+    { key: "subtitles", icon: Subtitles, label: t("a11y.subtitles") },
   ];
 
   const toggle = (key) => {
     const next = !settings[key];
     update({ [key]: next });
-    if (key === "voice") speak(next ? "הקראה בקול הופעלה" : "הקראה בקול בוטלה");
+    if (key === "voice") speak(next ? t("a11y.voiceOn") : t("a11y.voiceOff"));
   };
 
   if (!open) return null;
@@ -52,14 +52,14 @@ export default function AccessibilityMenu({ open, onClose }) {
       <div className="absolute inset-0 z-[64]" onClick={onClose} />
       <div
         className="absolute bottom-[max(5.5rem,calc(env(safe-area-inset-bottom)+4.5rem))] right-3 z-[66] w-72 max-w-[85%] rounded-3xl bg-white/95 backdrop-blur-xl shadow-2xl border border-black/5 p-2.5 animate-in fade-in slide-in-from-bottom-2"
-        dir="rtl"
+        dir={dir}
       >
         <div className="flex items-center justify-between px-2 py-2 mb-1">
           <span className="text-[15px] font-bold text-neutral-900 flex items-center gap-2">
             <span className="w-7 h-7 rounded-lg bg-emerald-50 flex items-center justify-center">
               <Accessibility className="w-4 h-4 text-emerald-600" />
             </span>
-            נגישות
+            {t("a11y.title")}
           </span>
           <button onClick={onClose} className="w-7 h-7 rounded-full bg-neutral-100 flex items-center justify-center active:scale-90 transition">
             <X className="w-3.5 h-3.5 text-neutral-500" />

@@ -10,7 +10,7 @@ const amenityIcon = {
 };
 
 export default function StationCard({ station, isBestValue, onClick }) {
-  const { settings } = useSettings();
+  const { settings, t, dir } = useSettings();
   const currency = settings.currency || station.currency || "₪";
   const isDC = station.type === "DC";
   const occupancyPct = station.total ? ((station.total - station.available) / station.total) * 100 : 0;
@@ -24,12 +24,12 @@ export default function StationCard({ station, isBestValue, onClick }) {
         "bg-white shadow-[0_2px_16px_rgba(0,0,0,0.05)] border",
         isBestValue ? "border-emerald-300 shadow-[0_6px_24px_rgba(16,185,129,0.16)]" : "border-black/[0.04]"
       )}
-      dir="rtl"
+      dir={dir}
     >
       {isBestValue && (
         <div className="flex items-center gap-1.5 mb-3">
           <span className="text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full flex items-center gap-1">
-            <Zap className="w-3 h-3 fill-emerald-600 text-emerald-600" /> הכי משתלם
+            <Zap className="w-3 h-3 fill-emerald-600 text-emerald-600" /> {t("card.bestValue")}
           </span>
         </div>
       )}
@@ -74,14 +74,14 @@ export default function StationCard({ station, isBestValue, onClick }) {
 
       <div className="flex items-end justify-between mt-4 pt-3 border-t border-neutral-100">
         <div>
-          <div className="text-[11px] text-neutral-400 leading-none font-medium">מחיר</div>
+          <div className="text-[11px] text-neutral-400 leading-none font-medium">{t("card.price")}</div>
           <div className="text-[20px] font-bold text-neutral-900 leading-tight mt-1">
             {currency}{station.price_per_kwh.toFixed(2)}
             <span className="text-[11px] font-medium text-neutral-400 mr-0.5">/kWh</span>
           </div>
         </div>
         <div className="text-left">
-          <div className="text-[11px] text-neutral-400 leading-none font-medium">זמינות</div>
+          <div className="text-[11px] text-neutral-400 leading-none font-medium">{t("card.availability")}</div>
           <div className="flex items-center gap-1 mt-1 justify-end">
             {available ? (
               <CheckCircle2 className="w-4 h-4 text-emerald-500" />

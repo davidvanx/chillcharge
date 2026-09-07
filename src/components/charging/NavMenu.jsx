@@ -1,7 +1,9 @@
 import React from "react";
-import { X, Apple, Navigation } from "lucide-react";
+import { X, Apple } from "lucide-react";
+import { useSettings } from "@/components/charging/SettingsProvider";
 
 export default function NavMenu({ station, onClose }) {
+  const { t, dir } = useSettings();
   if (!station) return null;
 
   const hasCoords = station.latitude != null && station.longitude != null;
@@ -16,7 +18,7 @@ export default function NavMenu({ station, onClose }) {
   ];
 
   return (
-    <div className="absolute inset-0 z-[60] flex items-end justify-center" dir="rtl">
+    <div className="absolute inset-0 z-[60] flex items-end justify-center" dir={dir}>
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={onClose} />
       <div className="relative w-full max-w-md bg-white rounded-t-[2rem] shadow-2xl animate-in slide-in-from-bottom pb-safe">
         <div className="pt-3 pb-2 flex justify-center">
@@ -24,7 +26,7 @@ export default function NavMenu({ station, onClose }) {
         </div>
         <div className="px-5 pb-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-[16px] font-bold text-neutral-900">ניווט לעמדה</h2>
+            <h2 className="text-[16px] font-bold text-neutral-900">{t("nav.title")}</h2>
             <button onClick={onClose} className="w-9 h-9 rounded-full bg-neutral-100 flex items-center justify-center active:scale-90 transition">
               <X className="w-4 h-4 text-neutral-500" />
             </button>

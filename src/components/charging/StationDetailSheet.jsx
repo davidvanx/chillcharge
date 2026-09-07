@@ -4,20 +4,14 @@ import { cn } from "@/lib/utils";
 import { useSettings } from "@/components/charging/SettingsProvider";
 import NavMenu from "@/components/charging/NavMenu";
 
-const amenityMeta = {
-  wifi: { icon: Wifi, label: "Wi-Fi" },
-  coffee: { icon: Coffee, label: "בית קפה" },
-  shop: { icon: ShoppingBag, label: "קניות" },
-};
-
 export default function StationDetailSheet({ station, onClose, onStartCharging }) {
-  const { settings } = useSettings();
+  const { settings, t, dir } = useSettings();
   const [showNav, setShowNav] = useState(false);
 
   useEffect(() => {
     if (settings.voice && station && "speechSynthesis" in window) {
       const u = new SpeechSynthesisUtterance(
-        `${station.name}, ${station.power_kw} קילוואט, מחיר ${station.price_per_kwh} לקילוואטשעה`
+        `${station.name}, ${station.power_kw} kW, ${t("detail.price")} ${station.price_per_kwh}`
       );
       u.lang = "he-IL";
       window.speechSynthesis.speak(u);
@@ -29,11 +23,17 @@ export default function StationDetailSheet({ station, onClose, onStartCharging }
   const isDC = station.type === "DC";
   const currency = settings.currency || station.currency || "₪";
   const distVal = settings.units === "mi" ? (station.distance_km ?? 0) * 0.6214 : station.distance_km;
-  const distUnit = settings.units === "mi" ? "mi" : "ק״מ";
+  const distUnit = settings.units === "mi" ? "mi" : t("settings.km");
   const available = station.status === "available" && station.available > 0;
 
+  const amenityMeta = {
+    wifi: { icon: Wifi, label: t("amenity.wifi") },
+    coffee: { icon: Coffee, label: t("amenity.coffee") },
+    shop: { icon: ShoppingBag, label: t("amenity.shop") },
+  };
+
   return (
-    <div className="absolute inset-0 z-50 flex items-end justify-center" dir="rtl">
+    <div className="absolute inset-0 z-50 flex items-end justify-center" dir={dir}>
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-in fade-in" onClick={onClose} />
       <div className="relative w-full max-w-md bg-white rounded-t-[2rem] shadow-2xl max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom no-scrollbar pb-safe">
         <div className="sticky top-0 z-10 bg-white/90 backdrop-blur-xl pt-3 pb-2 flex justify-center">
@@ -70,22 +70,22 @@ export default function StationDetailSheet({ station, onClose, onStartCharging }
 
           <div className="grid grid-cols-3 gap-2.5 mt-4">
             <div className="rounded-2xl bg-neutral-50 p-3 text-center">
-              <div className="text-[11px] text-neutral-400 font-medium">סוג</div>
+              <div className="text-[11px] text-neutral-400 font-medium">{t("detail.type")}</div>
               <div className={cn("text-[15px] font-bold mt-0.5", isDC ? "text-violet-600" : "text-sky-600")}>{station.type}</div>
             </div>
             <div className="rounded-2xl bg-neutral-50 p-3 text-center">
-              <div className="text-[11px] text-neutral-400 font-medium">הספק</div>
+              <div className="text-[11px] text-neutral-400 font-medium">{t("detail.power")}</div>
               <div className="text-[15px] font-bold text-neutral-900 mt-0.5">{station.power_kw} kW</div>
             </div>
             <div className="rounded-2xl bg-neutral-50 p-3 text-center">
-              <div className="text-[11px] text-neutral-400 font-medium">מחיר</div>
+              <div className="text-[11px] text-neutral-400 font-medium">{t("detail.price")}</div>
               <div className="text-[15px] font-bold text-neutral-900 mt-0.5">{currency}{station.price_per_kwh.toFixed(2)}</div>
             </div>
           </div>
 
           <div className="mt-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-[13px] font-bold text-neutral-700">זמינות</span>
+              <span className="text-[13px] font-bold text-neutral-700">{t("detail.availability")}</span>
               <span className="flex items-center gap-1 text-[13px]">
                 {available ? (
                   <CheckCircle2 className="w-4 h-4 text-emerald-500" />
@@ -93,7 +93,7 @@ export default function StationDetailSheet({ station, onClose, onStartCharging }
                   <Clock className="w-4 h-4 text-amber-500" />
                 )}
                 <span className="font-bold text-neutral-900">{station.available}</span>
-                <span className="text-neutral-400">/ {station.total} פנוי</span>
+                <span className="text-neutral-400">/ {station.total} {t("detail.free")}</span>
               </span>
             </div>
             <div className="h-2 rounded-full bg-neutral-100 overflow-hidden">
@@ -106,7 +106,7 @@ export default function StationDetailSheet({ station, onClose, onStartCharging }
 
           {station.amenities?.length > 0 && (
             <div className="mt-4">
-              <div className="text-[13px] font-bold text-neutral-700 mb-2">שירותים במקום</div>
+              <div className="text-[13px] font-bold text-neutral-700 mb-2">{t("detail.amenities")}</div>
               <div className="flex flex-wrap gap-2">
                 {station.amenities.map((a) => {
                   const meta = amenityMeta[a];
@@ -127,16 +127,16 @@ export default function StationDetailSheet({ station, onClose, onStartCharging }
             onClick={() => onStartCharging?.(station)}
             className="mt-5 w-full h-14 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 font-bold text-[16px] text-white flex items-center justify-center gap-2 active:scale-[0.98] transition shadow-lg shadow-emerald-500/30"
           >
-            <Zap className="w-5 h-5 fill-white" /> התחל טעינה
+            <Zap className="w-5 h-5 fill-white" /> {t("detail.startCharging")}
           </button>
           <div className="mt-2.5 flex gap-2.5">
             <button className="flex-1 h-12 rounded-2xl bg-neutral-100 font-semibold text-[14px] text-neutral-800 flex items-center justify-center gap-1.5 active:scale-95 transition">
               <Bookmark className="w-4 h-4" />
-              שמור
+              {t("detail.save")}
             </button>
             <button onClick={() => setShowNav(true)} className="flex-1 h-12 rounded-2xl bg-neutral-900 font-semibold text-[14px] text-white flex items-center justify-center gap-1.5 active:scale-95 transition">
               <Navigation className="w-4 h-4" />
-              נווט
+              {t("detail.navigate")}
             </button>
           </div>
         </div>

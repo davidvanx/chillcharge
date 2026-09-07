@@ -1,7 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import { translations, getDir } from "@/lib/translations";
 
 const SettingsContext = createContext(null);
 export const useSettings = () => useContext(SettingsContext);
+
+export function useTranslation() {
+  const { settings, t, dir, lang } = useSettings();
+  return { t, dir, lang };
+}
 
 const LS_SETTINGS = "chillcharge_settings";
 const LS_PROFILE = "chillcharge_profile";
@@ -50,8 +56,21 @@ export function SettingsProvider({ children }) {
   const update = (patch) => setSettings((s) => ({ ...s, ...patch }));
   const updateProfile = (patch) => setProfile((p) => ({ ...p, ...patch }));
 
+  const lang = settings.language || "he";
+  const dir = getDir(lang);
+  const t = (key, params) => {
+    const dict = translations[lang] || translations.he;
+    let str = dict[key] || translations.he[key] || key;
+    if (params) {
+      Object.keys(params).forEach((p) => {
+        str = str.replace(`{${p}}`, params[p]);
+      });
+    }
+    return str;
+  };
+
   return (
-    <SettingsContext.Provider value={{ settings, update, profile, updateProfile }}>
+    <SettingsContext.Provider value={{ settings, update, profile, updateProfile, t, dir, lang }}>
       {children}
     </SettingsContext.Provider>
   );
