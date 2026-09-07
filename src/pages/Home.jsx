@@ -9,6 +9,7 @@ import IPhoneFrame from "@/components/charging/iPhoneFrame";
 import SettingsMenu from "@/components/charging/SettingsMenu";
 import PaymentSheet from "@/components/charging/PaymentSheet";
 import ChargingSession from "@/components/charging/ChargingSession";
+import PlugInPrompt from "@/components/charging/PlugInPrompt";
 import AccessibilityMenu from "@/components/charging/AccessibilityMenu";
 import MapView from "@/components/charging/MapView";
 import FiltersSheet from "@/components/charging/FiltersSheet";
@@ -31,6 +32,7 @@ function HomeInner() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [payStation, setPayStation] = useState(null);
   const [sessionStation, setSessionStation] = useState(null);
+  const [plugStation, setPlugStation] = useState(null);
   const [view, setView] = useState("list");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [a11yOpen, setA11yOpen] = useState(false);
@@ -302,7 +304,8 @@ function HomeInner() {
         }}
       />
       <SettingsMenu open={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      <PaymentSheet station={payStation} onClose={() => setPayStation(null)} onConfirm={(s) => setSessionStation(s)} />
+      <PaymentSheet station={payStation} onClose={() => setPayStation(null)} onConfirm={(s) => setPlugStation(s)} />
+      <PlugInPrompt station={plugStation} onClose={() => setPlugStation(null)} onConfirmed={(s) => setSessionStation(s)} />
       <ChargingSession station={sessionStation} onEnd={() => setSessionStation(null)} />
       <FiltersSheet
         open={filtersOpen}

@@ -97,6 +97,11 @@ export const translations = {
     "a11y.voiceOff": "הקראה בקול בוטלה",
     // NavMenu
     "nav.title": "ניווט לעמדה",
+    "plug.title": "חבר את המטען לרכב",
+    "plug.desc": "חבר את הכבל לשקע הטעינה ברכבך, ולחץ על הכפתור כאשר הכבל מחובר היטב.",
+    "plug.confirm": "הכבל מחובר",
+    "plug.detected": "הכבל זוהה!",
+    "plug.starting": "מתחיל טעינה…",
     // Settings menu items
     "settings.menuTitle": "תפריט",
     "settings.settings": "הגדרות",
@@ -274,6 +279,11 @@ export const translations = {
     "a11y.voiceOff": "Voice reading disabled",
     // NavMenu
     "nav.title": "Navigate to station",
+    "plug.title": "Connect the charger to your vehicle",
+    "plug.desc": "Plug the cable into your vehicle's charging port, and press the button when the cable is firmly connected.",
+    "plug.confirm": "Cable connected",
+    "plug.detected": "Cable detected!",
+    "plug.starting": "Starting charging…",
     // Settings menu items
     "settings.menuTitle": "Menu",
     "settings.settings": "Settings",
@@ -451,6 +461,11 @@ export const translations = {
     "a11y.voiceOff": "تم إلغاء القراءة الصوتية",
     // NavMenu
     "nav.title": "التنقل إلى المحطة",
+    "plug.title": "صل الشاحن بسيارتك",
+    "plug.desc": "صل الكابل بمنفذ الشحن في سيارتك، واضغط على الزر عند توصيل الكابل بشكل محكم.",
+    "plug.confirm": "الكابل متصل",
+    "plug.detected": "تم اكتشاف الكابل!",
+    "plug.starting": "جارٍ بدء الشحن…",
     // Settings menu items
     "settings.menuTitle": "القائمة",
     "settings.settings": "الإعدادات",
