@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Zap, BatteryCharging, Check, Star, X, Phone, Bell } from "lucide-react";
+import { Zap, BatteryCharging, Check, Star, X, Phone, Bell, Cable, AlertTriangle } from "lucide-react";
 import { useSettings } from "@/components/charging/SettingsProvider";
 import { addReceipt } from "@/lib/receipts";
 
@@ -25,6 +25,9 @@ export default function ChargingSession({ station, onEnd }) {
   const [rating, setRating] = useState(0);
   const [hover, setHover] = useState(0);
   const notifiedRef = useRef(false);
+  const [disconnectTimer, setDisconnectTimer] = useState(900);
+  const [idleFee, setIdleFee] = useState(false);
+  const [disconnected, setDisconnected] = useState(false);
 
   useEffect(() => {
     if ("Notification" in window && Notification.permission === "default") {
@@ -42,6 +45,9 @@ export default function ChargingSession({ station, onEnd }) {
       setRating(0);
       setHover(0);
       notifiedRef.current = false;
+      setDisconnectTimer(900);
+      setIdleFee(false);
+      setDisconnected(false);
     }
   }, [station]);
 
@@ -93,6 +99,16 @@ export default function ChargingSession({ station, onEnd }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "disconnect" || disconnected) return;
+    if (disconnectTimer <= 0) {
+      if (!idleFee) setIdleFee(true);
+      return;
+    }
+    const id = setTimeout(() => setDisconnectTimer((tm) => tm - 1), 1000);
+    return () => clearTimeout(id);
+  }, [phase, disconnectTimer, disconnected, idleFee]);
 
   if (!station) return null;
 
@@ -172,11 +188,96 @@ export default function ChargingSession({ station, onEnd }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
-          onClick={onEnd}
+          onClick={() => { setDisconnectTimer(900); setIdleFee(false); setDisconnected(false); setPhase("disconnect"); }}
           className="mt-8 w-full max-w-[280px] py-3.5 rounded-2xl bg-white text-emerald-600 font-bold text-[15px] active:scale-95 transition shadow-lg"
         >
           {rating > 0 ? t("session.finish") : t("session.skip")}
         </motion.button>
+      </motion.div>
+    );
+  }
+
+  if (phase === "disconnect") {
+    const mins = Math.floor(disconnectTimer / 60);
+    const secs = disconnectTimer % 60;
+    const timeStr = `${mins}:${secs.toString().padStart(2, "0")}`;
+    const isUrgent = disconnectTimer <= 300 && disconnectTimer > 0;
+
+    return (
+      <motion.div
+        className="absolute inset-0 z-[70] bg-gradient-to-b from-neutral-900 to-neutral-800 flex flex-col items-center justify-center px-6 text-white text-center"
+        dir={dir}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
+        <AnimatePresence mode="wait">
+          {!disconnected ? (
+            <motion.div
+              key="disconnect-prompt"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="flex flex-col items-center w-full max-w-[300px]"
+            >
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{ repeat: Infinity, duration: 2 }}
+                className={`w-24 h-24 rounded-3xl flex items-center justify-center mb-6 ${idleFee ? "bg-red-500/20" : "bg-emerald-500/20"}`}
+              >
+                {idleFee ? (
+                  <AlertTriangle className="w-12 h-12 text-red-400" />
+                ) : (
+                  <Cable className="w-12 h-12 text-emerald-400" />
+                )}
+              </motion.div>
+
+              {idleFee ? (
+                <>
+                  <h2 className="text-[22px] font-bold mb-2 text-red-400">{t("disconnect.idleWarning")}</h2>
+                  <p className="text-[14px] text-white/60 max-w-[260px] mb-8 leading-relaxed">{t("disconnect.idleDesc")}</p>
+                </>
+              ) : (
+                <>
+                  <h2 className="text-[22px] font-bold mb-2">{t("disconnect.title")}</h2>
+                  <p className="text-[14px] text-white/60 max-w-[260px] mb-6 leading-relaxed">{t("disconnect.desc")}</p>
+                  <div className={`text-[48px] font-bold mb-8 ${isUrgent ? "text-red-400" : "text-emerald-400"}`}>
+                    {timeStr}
+                  </div>
+                </>
+              )}
+
+              <button
+                onClick={() => {
+                  setDisconnected(true);
+                  setTimeout(() => onEnd(), 1500);
+                }}
+                className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-white font-bold text-[15px] flex items-center justify-center gap-2 active:scale-95 transition shadow-lg shadow-emerald-500/30"
+              >
+                <Check className="w-4 h-4" />
+                {t("disconnect.confirm")}
+              </button>
+            </motion.div>
+          ) : (
+            <motion.div
+              key="disconnected"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              className="flex flex-col items-center"
+            >
+              <motion.div
+                initial={{ scale: 0, rotate: -30 }}
+                animate={{ scale: 1, rotate: 0 }}
+                transition={{ type: "spring", stiffness: 200, damping: 14 }}
+                className="w-24 h-24 rounded-full bg-emerald-500 flex items-center justify-center mb-6 shadow-lg shadow-emerald-500/50"
+              >
+                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ delay: 0.2, type: "spring", stiffness: 220, damping: 12 }}>
+                  <Check className="w-12 h-12 text-white" strokeWidth={3} />
+                </motion.div>
+              </motion.div>
+              <h2 className="text-[22px] font-bold">{t("disconnect.done")}</h2>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
     );
   }
