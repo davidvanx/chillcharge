@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Zap, BatteryCharging, Check, Star, X, Phone, Bell, Cable, AlertTriangle } from "lucide-react";
 import { useSettings } from "@/components/charging/SettingsProvider";
 import { addReceipt } from "@/lib/receipts";
+import { getCompanyPhone } from "@/lib/chargingCompanies";
 
 const CAPACITY_KWH = 60;
 const R = 78;
@@ -115,6 +116,8 @@ export default function ChargingSession({ station, onEnd }) {
   const kwh = (progress / 100) * CAPACITY_KWH;
   const cost = kwh * station.price_per_kwh;
   const offset = C * (1 - progress / 100);
+  const supportPhone = getCompanyPhone(station.network) || "*2422";
+  const supportPhoneTel = supportPhone.replace(/[*-]/g, "");
 
   const stop = () => setPhase("done");
 
@@ -412,7 +415,7 @@ export default function ChargingSession({ station, onEnd }) {
 
       <div className="px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] space-y-3">
         <a
-          href="tel:*2422"
+          href={`tel:${supportPhoneTel}`}
           className="w-full rounded-2xl bg-white/5 border border-white/10 px-4 py-3 flex items-center gap-3 active:scale-95 transition"
         >
           <span className="w-9 h-9 rounded-full bg-emerald-500/20 flex items-center justify-center shrink-0">
@@ -420,9 +423,9 @@ export default function ChargingSession({ station, onEnd }) {
           </span>
           <div className="flex-1 text-right">
             <div className="text-[13px] font-semibold text-white">{t("session.support")}</div>
-            <div className="text-[11px] text-white/60">{t("session.supportDesc")}</div>
+            <div className="text-[11px] text-white/60">{station.network}</div>
           </div>
-          <span className="text-[16px] font-bold text-emerald-400 tracking-wide" dir="ltr">*2422</span>
+          <span className="text-[16px] font-bold text-emerald-400 tracking-wide" dir="ltr">{supportPhone}</span>
         </a>
         <button onClick={stop} className="w-full py-3.5 rounded-2xl bg-white/10 border border-white/20 text-white font-semibold text-[15px] active:scale-95 transition">
           {t("session.stopCharging")}
